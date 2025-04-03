@@ -1,0 +1,20 @@
+[
+    {
+      "id": 1,
+      "title": "İş Sözleşmesi",
+      "category": "İş Hukuku",
+      "content": "Bu sözleşme [ŞİRKET_ADI] ile [ÇALIŞAN_ADI] arasında imzalanmıştır..."
+    },
+    {
+      "id": 2,
+      "title": "Kira Sözleşmesi",
+      "category": "Gayrimenkul",
+      "content": "Bu sözleşme [KİRACI_ADI] ile [EV_SAHİBİ_ADI] arasında [ADRES] adresindeki mülk için imzalanmıştır..."
+    },
+    {
+      "id": 3,
+      "title": "Hizmet Sözleşmesi",
+      "category": "Ticaret",
+      "content": "Bu sözleşme [HİZMET_VEREN] ile [HİZMET_ALAN] arasında [HİZMET_TANIMI] hizmetinin sağlanması için imzalanmıştır..."
+    }
+  ]
