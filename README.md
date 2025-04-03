@@ -1,16 +1,16 @@
 # Contract-Generator
 
-**Amaç**: Kullanıcıların şablon sözleşmeleri doldurup PDF olarak indirebileceği bir web uygulaması.
+**Purpose**: A stable web application that allows users to edit predefined contract templates and download them as PDFs.
 
-## 🚀 Başlarken
-```bash
-npm install
-npm run dev
-```
+## ✨ Features
+- [x] Template management (read/edit)
+- [x] Stable text editor experience
+- [x] Professional PDF export (react-pdf)
+- [ ] Dynamic field autocomplete (coming soon)
+- [ ] MongoDB database integration
 
-## 📌 Yapılacaklar
-Temel React yapısı oluşturuldu
-
-PDF export özelliği eklenecek
-
-MongoDB entegrasyonu yapılacak
+## 🛠 Technical Stack
+- Frontend: Vite + React (JavaScript)
+- PDF Generator: @react-pdf/renderer
+- Routing: react-router-dom
+- Styling: CSS Modules
