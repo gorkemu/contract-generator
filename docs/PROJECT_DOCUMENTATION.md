@@ -6,58 +6,73 @@ Kullanıcıların şablon sözleşmeleri düzenleyip Türkçe karakter desteğiy
 - Frontend: React (JavaScript) + Vite
 - PDF Kütüphanesi: pdf-lib + fontkit (Türkçe karakter desteğiyle)
 - Routing: react-router-dom v7
-- Styling: CSS Modules + Grid Layout
-- Mobil Duyarlılık: Evet (Temel responsive desteği)
+- Styling: CSS Modules
+- Etkileşim: Çift tık/uzun basma desteği
+- Mobil Duyarlılık: Tam touch desteği
 
 ## ✅ Son Yapılan Değişiklikler
+1. **Yeni Editör Yaklaşımı**
+```mermaid
+graph TB
+A[Önizleme] -->|Çift Tık| B[Düzenleme Modu]
+A -->|Uzun Bas| B
+B -->|Enter| C[Kaydet]
+B -->|Esc| D[İptal]
+```
 
-1. PDF Generator Yenilendi
+2. **PDF Generator Yenilendi**
 - @react-pdf/renderer kaldırıldı
 - Yeni implementasyon: pdf-lib + fontkit
 - Türkçe karakter sorunu tamamen çözüldü (ğ, ş, ı, İ vb.)
 - Font: Noto Sans (public/fonts altında)
-- Akıllı değişken yönetimi (peşinat, depozito, kontrat süresi)
-- Gerçekçi mock data yapısı
+- Akıllı satır kaydırma ve sayfa sonu yönetimi
 
-2. **Yeni Arayüz**
-```mermaid
-graph LR
-A[Sol Panel] -->|Düzenlenebilir Alanlar| B((3 Temel Değişken))
-C[Sağ Panel] -->|Tam Sözleşme Metni| D{{19 Madde}}
-```
-3. **PDF Optimizasyonları**
-
-- Otomatik sayfa ekleme
-- Türkçe font embedding (Noto Sans)
-- Profesyonel doküman formatı
+3. **Arayüz Yenilikleri**
+- Sol panel kaldırıldı (doğrudan metin üzerinde düzenleme)
+- Boş alanlar sarı vurgulu
+- Zorunlu alan validasyonu (kırmızı çerçeve + uyarı)
+- Mobil optimizasyon (klavye açılınca otomatik kaydırma)
 
 ## 📝 İstenen Sonraki Adımlar
-1. Dinamik Alan Desteği:
+1. **Gelişmiş Editör Özellikleri**
 
-- [ŞİRKET_ADI] gibi placeholder'ları otomatik algılayan form
-- Kullanıcıya bu alanları doldurması için inputlar gösterme
+- Rich text düzenleme (kalın/italik)
+- Madde numaralarını otomatik artırma
+- Şablon bölümlerini foldable yapma
 
 2. Backend Entegrasyonu:
 ```
-mermaid
 graph LR
-A[Frontend] -->|Axios| B[Node.js/Express]
-B --> C[MongoDB]
+A[Frontend] -->|REST API| B[Node.js/Express]
+B --> C[(PostgreSQL)]
+C --> D[Şablon Yönetimi]
 ```
 3. Yeni Özellikler:
 
 - PDF imza alanı ekleme
-- Şablon kategorizasyonu
-- Kullanıcı özel şablon kaydetme
+- Dinamik tablo oluşturma
+- Versiyon kontrolü (şablon geçmişi)
 
-## 📂 Şablon Yapısı
+## 📂 Güncel Şablon Yapısı
 {
   "id": 3,
   "title": "Kira Sözleşmesi",
-  "content": "10. Peşinat: {{peşinat_miktar}} TL\n12. Süre: {{kontrat_yıl}} yıl...",
+  "category": "Gayrimenkul",
+  "content": "Kiracı: {{kiracı}}\nPeşinat: {{peşinat_miktar}} TL...",
   "variables": {
-    "peşinat_miktar": "5000",
-    "kontrat_yıl": "3"
+    "kiracı": "",
+    "peşinat_miktar": "",
+    "kontrat_yıl": "1"
   }
 }
 
+
+## Key changes made:
+1. Removed references to the left panel in both documents
+2. Added documentation for the new in-place editing system
+3. Updated interaction guides
+4. Added new technical details about touch/long-press support
+5. Updated the visual diagrams to reflect the current architecture
+6. Added installation instructions for the required font
+7. Kept all Turkish character support information
+8. Updated test examples to reflect the new editing method
