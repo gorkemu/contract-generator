@@ -6,7 +6,7 @@ Kullanıcıların şablon sözleşmeleri düzenleyip Türkçe karakter desteğiy
 - Frontend: React (JavaScript) + Vite
 - PDF Kütüphanesi: pdf-lib + fontkit (Türkçe karakter desteğiyle)
 - Routing: react-router-dom v7
-- Styling: CSS Modules
+- Styling: CSS Modules + Grid Layout
 - Mobil Duyarlılık: Evet (Temel responsive desteği)
 
 ## ✅ Son Yapılan Değişiklikler
@@ -16,19 +16,20 @@ Kullanıcıların şablon sözleşmeleri düzenleyip Türkçe karakter desteğiy
 - Yeni implementasyon: pdf-lib + fontkit
 - Türkçe karakter sorunu tamamen çözüldü (ğ, ş, ı, İ vb.)
 - Font: Noto Sans (public/fonts altında)
+- Akıllı değişken yönetimi (peşinat, depozito, kontrat süresi)
+- Gerçekçi mock data yapısı
 
-2. Dosya Yapısı
-src/
-├── components/
-│   └── ContractEditor.jsx (ana component)
-├── utils/
-│   └── pdfGenerator.js (yeni PDF motoru)
-└── data/
-    └── templates.json (mock data)
+2. **Yeni Arayüz**
+```mermaid
+graph LR
+A[Sol Panel] -->|Düzenlenebilir Alanlar| B((3 Temel Değişken))
+C[Sağ Panel] -->|Tam Sözleşme Metni| D{{19 Madde}}
+```
+3. **PDF Optimizasyonları**
 
-3. Performans İyileştirmeleri: 
-- Doğrudan blob tabanlı PDF oluşturma
-- Font embedding ile stabil çıktı
+- Otomatik sayfa ekleme
+- Türkçe font embedding (Noto Sans)
+- Profesyonel doküman formatı
 
 ## 📝 İstenen Sonraki Adımlar
 1. Dinamik Alan Desteği:
@@ -49,13 +50,14 @@ B --> C[MongoDB]
 - Şablon kategorizasyonu
 - Kullanıcı özel şablon kaydetme
 
-## 📂 Örnek Mock Data Yapısı
-[
-  {
-    "id": 1,
-    "title": "İş Sözleşmesi",
-    "category": "İş Hukuku",
-    "content": "Bu sözleşme [ŞİRKET_ADI] ile [ÇALIŞAN_ADI] arasında [TARİH] tarihinde imzalanmıştır..."
+## 📂 Şablon Yapısı
+{
+  "id": 3,
+  "title": "Kira Sözleşmesi",
+  "content": "10. Peşinat: {{peşinat_miktar}} TL\n12. Süre: {{kontrat_yıl}} yıl...",
+  "variables": {
+    "peşinat_miktar": "5000",
+    "kontrat_yıl": "3"
   }
-]
+}
 

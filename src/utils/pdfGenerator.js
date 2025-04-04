@@ -1,47 +1,73 @@
-// src/utils/pdfGenerator.js
 import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 
 export async function generateContractPDF(title, content) {
-  try {
-    // 1. Create PDF
-    const pdfDoc = await PDFDocument.create();
-    pdfDoc.registerFontkit(fontkit);
+  const pdfDoc = await PDFDocument.create();
+  pdfDoc.registerFontkit(fontkit);
 
-    // 2. Load font (from public/fonts)
-    const fontUrl = '/fonts/NotoSans-Regular.ttf';
-    const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
-    const font = await pdfDoc.embedFont(fontBytes);
+  // Font yükleme
+  const fontUrl = '/fonts/NotoSans-Regular.ttf';
+  const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
+  const font = await pdfDoc.embedFont(fontBytes);
 
-    // 3. Add content
-    const page = pdfDoc.addPage([595, 842]); // A4 size
+  let page = pdfDoc.addPage([595, 842]); // A4
+  let yPosition = 750;
+  const margin = 50;
+  const lineHeight = 14;
+
+  // Metin çizme fonksiyonu
+  const drawText = (text, size = 11, isBold = false) => {
+    const lines = text.split('\n');
     
-    // Title
-    page.drawText(title, {
-      x: 50,
-      y: 800,
-      size: 16,
-      font,
-      color: rgb(0, 0, 0)
-    });
+    lines.forEach(line => {
+      // Sayfa sonu kontrolü
+      if (yPosition < 50) {
+        page = pdfDoc.addPage([595, 842]);
+        yPosition = 750;
+      }
 
-    // Content with line breaks
-    content.split('\n').forEach((line, i) => {
-      page.drawText(line, {
-        x: 50,
-        y: 750 - (i * 20), // Line spacing
-        size: 12,
-        font,
-        color: rgb(0, 0, 0)
+      // Uzun satırları bölme
+      const chunks = [];
+      let currentChunk = '';
+      
+      line.split(' ').forEach(word => {
+        const testLine = currentChunk ? `${currentChunk} ${word}` : word;
+        const testWidth = font.widthOfTextAtSize(testLine, size);
+        
+        if (testWidth > 495) {
+          chunks.push(currentChunk);
+          currentChunk = word;
+        } else {
+          currentChunk = testLine;
+        }
+      });
+      
+      if (currentChunk) chunks.push(currentChunk);
+
+      // Çizim
+      chunks.forEach(chunk => {
+        page.drawText(chunk, {
+          x: margin,
+          y: yPosition,
+          size,
+          font,
+          color: rgb(0, 0, 0),
+          weight: isBold ? 'bold' : 'normal'
+        });
+        yPosition -= lineHeight;
       });
     });
+    yPosition -= 5;
+  };
 
-    // 4. Return as Blob for direct download
-    const pdfBytes = await pdfDoc.save();
-    return new Blob([pdfBytes], { type: 'application/pdf' });
+  // Başlık
+  drawText(title, 16, true);
+  
+  // İçerik
+  const sections = content.split(/\n\s*\n/);
+  sections.forEach(section => {
+    drawText(section);
+  });
 
-  } catch (error) {
-    console.error('PDF generation error:', error);
-    throw new Error('PDF oluşturulamadı');
-  }
+  return await pdfDoc.save();
 }

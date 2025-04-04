@@ -4,9 +4,9 @@
 
 ## ✨ Features
 - [x] Template management (read/edit)
-- [x] Stable text editor with Turkish support
-- [x] Professional PDF export (pdf-lib)
-- [ ] Dynamic field detection
+- [x] Smart variable management 
+- [x] Multi-page PDF generation
+- [x] Real-time preview
 - [ ] User authentication
 
 ## 🛠 Technical Stack
@@ -15,16 +15,21 @@
 - Routing: react-router-dom@7
 - Styling: CSS Modules
 
-## ⚠ **Önemli Notlar**  
-1. **Font Gereksinimi**:  
-   Projeyi çalıştırmak için `public/fonts/NotoSans-Regular.ttf` dosyası zorunludur.
+## ⚠ Critical Notes
+1. **Font Requirement**:  
+   Must have `public/fonts/NotoSans-Regular.ttf` for proper rendering.
 
-2. **Test Senaryoları**:  
-   ```javascript
-   // PDF Türkçe karakter testi
-   test('PDF should render Turkish chars correctly', async () => {
-     const pdf = await generateContractPDF("Test", "İşğüçŞÖÇ");
-     expect(pdf).toBeValidPDFWithText("İşğüçŞÖÇ");
-   });
+2. **Template Structure**:
+   - Uses `{{variable}}` syntax for editable fields
+   - Supports multi-line clauses
+   - Automatic page breaking
 
-3. **TypeScript**: Proje saf JavaScript olarak devam edecek.   
+3. **Testing**:
+```javascript
+// Verify contract variables
+test('Fills contract variables correctly', () => {
+  render(<ContractEditor />);
+  expect(screen.getByLabelText('PEŞİNAT MİKTARI')).toBeInTheDocument();
+});
+```
+  

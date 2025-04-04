@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './ContractEditor.module.css';
 import { generateContractPDF } from '../utils/pdfGenerator';
@@ -7,8 +7,7 @@ export default function ContractEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [template, setTemplate] = useState(null);
-  const [content, setContent] = useState('');
-  const editorRef = useRef(null);
+  const [variables, setVariables] = useState({});
 
   useEffect(() => {
     import('../data/templates.json')
@@ -16,38 +15,40 @@ export default function ContractEditor() {
         const foundTemplate = data.default.find(t => t.id === parseInt(id));
         if (foundTemplate) {
           setTemplate(foundTemplate);
-          setContent(foundTemplate.content);
+          setVariables(foundTemplate.variables || {});
         } else {
           navigate('/');
         }
-      })
-      .catch(err => console.error('Template yükleme hatası:', err));
+      });
   }, [id, navigate]);
 
-  const handleContentChange = (e) => {
-    setContent(e.target.value);
-  };
-
-  const handleSave = () => {
-    alert('Sözleşme kaydedildi! (Şimdilik mock)');
+  const handleVariableChange = (key, value) => {
+    setVariables(prev => ({ ...prev, [key]: value }));
   };
 
   const handleExportPDF = async () => {
     try {
-      const pdfBytes = await generateContractPDF(template.title, content);
+      // Değişkenleri içeriğe yerleştir
+      let filledContent = template.content;
+      Object.keys(variables).forEach(key => {
+        filledContent = filledContent.replace(
+          new RegExp(`{{${key}}}`, 'g'),
+          variables[key]
+        );
+      });
+
+      const pdfBytes = await generateContractPDF(template.title, filledContent);
       
-      // Create download
+      // PDF indirme işlemi (mevcut kodun aynısı)
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `${template.title.replace(/\s+/g, '_')}.pdf`;
-      document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
     } catch (error) {
       console.error('PDF oluşturma hatası:', error);
-      alert('PDF oluşturulurken hata oluştu!');
+      alert('PDF oluşturulamadı!');
     }
   };
 
@@ -55,28 +56,44 @@ export default function ContractEditor() {
 
   return (
     <div className={styles.container}>
-      <h1>{template.title} - Düzenleme</h1>
-      <p className={styles.category}>{template.category}</p>
-      
-      <textarea
-        ref={editorRef}
-        className={styles.editor}
-        value={content}
-        onChange={handleContentChange}
-        rows={20}
-        placeholder="Metni serbestçe düzenleyin..."
-      />
-      
-      <div className={styles.buttonGroup}>
-        <button onClick={handleSave} className={styles.saveButton}>
-          Kaydet
-        </button>
+      <div className={styles.variablesPanel}>
+        <h3>Sözleşme Alanları</h3>
+        {Object.keys(template.variables || {}).map(key => (
+          <div key={key} className={styles.variableInput}>
+            <label>{key.replace(/_/g, ' ').toUpperCase()}</label>
+            <input
+              type="text"
+              value={variables[key] || ''}
+              onChange={(e) => handleVariableChange(key, e.target.value)}
+              placeholder={`${key.replace(/_/g, ' ')} girin`}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.contentPanel}>
+        <h1>{template.title}</h1>
+        <p className={styles.category}>{template.category}</p>
         
-        <button 
-          onClick={handleExportPDF} 
-          className={styles.exportButton}
-        >
-          PDF Olarak İndir
+        <div className={styles.preview}>
+          {template.content.split('\n').map((paragraph, i) => (
+            <p key={i}>
+              {paragraph.split(/({{.*?}})/g).map((part, j) => {
+                const variableMatch = part.match(/{{(.*?)}}/);
+                return variableMatch ? (
+                  <span key={j} className={styles.variableHighlight}>
+                    {variables[variableMatch[1]] || `[${variableMatch[1]}]`}
+                  </span>
+                ) : (
+                  part
+                );
+              })}
+            </p>
+          ))}
+        </div>
+
+        <button onClick={handleExportPDF} className={styles.exportButton}>
+          PDF Oluştur
         </button>
       </div>
     </div>
