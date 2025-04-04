@@ -1,100 +1,144 @@
-/* MEVCUT STİLLER (Aynen korunuyor) */
 .container {
-  padding: 2rem;
-  max-width: 1200px; /* Genişlik artırıldı */
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 30px;
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
 }
 
-.loading {
-  padding: 2rem;
+.contentPanel {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.contentPanel h1 {
+  margin-bottom: 5px;
+  color: #212529;
   text-align: center;
 }
 
 .category {
-  color: #666;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+  font-style: italic;
+  text-align: center;
 }
 
-/* EDITOR YERİNE PREVIEW GELDİ */
 .preview {
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-top: 20px;
   line-height: 1.6;
-  margin: 20px 0;
-  white-space: pre-line;
-}
-
-/* YENİ EKLENEN STİLLER */
-.variablesPanel {
-  background: #f8f9fa;
+  white-space: pre-wrap;
   padding: 20px;
+  background-color: #f8f9fa;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  align-self: start;
-  position: sticky;
-  top: 20px;
 }
 
-.variableInput {
+.preview p {
   margin-bottom: 15px;
 }
 
-.variableInput label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #555;
-}
-
-.variableInput input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.95rem;
-}
-
 .variableHighlight {
-  background-color: #e3f2fd;
+  cursor: pointer;
   padding: 2px 4px;
   border-radius: 3px;
-  color: #1976d2;
-  font-weight: 500;
+  transition: all 0.2s;
 }
 
-.contentPanel {
-  padding: 0 10px;
+.variableHighlight:hover {
+  background-color: #e9ecef;
 }
 
-/* BUTON GRUBU GÜNCELLEMESİ */
-.buttonGroup {
+.emptyVariable {
+  background-color: #fff3bf;
+}
+
+.variableInputEdit {
+  display: inline-block;
+  position: relative;
+  margin: -2px 0;
+}
+
+.variableInputEdit input {
+  padding: 4px 8px;
+  border: 2px solid #3a86ff;
+  border-radius: 4px;
+  background-color: #e2f0fd;
+  box-shadow: 0 0 8px rgba(58, 134, 255, 0.5);
+  min-width: 120px;
+  font: inherit;
+}
+
+.errorInput {
+  border-color: #dc3545 !important;
+  background-color: #f8d7da !important;
+}
+
+.errorTooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background-color: #dc3545;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.exportButton {
+  display: block;
+  margin: 30px auto 0;
+  padding: 12px 24px;
+  background-color: #3a86ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+  width: 200px;
+  text-align: center;
+}
+
+.exportButton:hover {
+  background-color: #2667cc;
+}
+
+.exportButton[data-has-errors="true"] {
+  background-color: #dc3545;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+  }
+}
+
+.loading {
   display: flex;
-  gap: 1rem;
-  justify-content: flex-end; /* Sağa yasla */
-  margin-top: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: #6c757d;
 }
 
-/* MOBİL UYUMLULUK */
 @media (max-width: 768px) {
-  .container {
-    grid-template-columns: 1fr;
-    padding: 1rem;
+  .contentPanel {
+    padding: 15px;
   }
   
-  .variablesPanel {
-    position: static;
-    margin-bottom: 20px;
+  .preview {
+    padding: 15px;
   }
-}
-
-/* ESKİ EDITOR STİLLERİNİ KALDIRMIYORUZ (BACKUP İÇİN TUTUYORUZ) */
-.editor {
-  display: none; /* Şimdilik gizli tutuyoruz */
 }
