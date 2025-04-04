@@ -1,15 +1,13 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import PdfDocument from './PdfDocument';
 import styles from './ContractEditor.module.css';
+import { generateContractPDF } from '../utils/pdfGenerator';
 
 export default function ContractEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [template, setTemplate] = useState(null);
   const [content, setContent] = useState('');
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -34,6 +32,25 @@ export default function ContractEditor() {
     alert('Sözleşme kaydedildi! (Şimdilik mock)');
   };
 
+  const handleExportPDF = async () => {
+    try {
+      const pdfBytes = await generateContractPDF(template.title, content);
+      
+      // Create download
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${template.title.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('PDF oluşturma hatası:', error);
+      alert('PDF oluşturulurken hata oluştu!');
+    }
+  };
+
   if (!template) return <div className={styles.loading}>Yükleniyor...</div>;
 
   return (
@@ -41,7 +58,6 @@ export default function ContractEditor() {
       <h1>{template.title} - Düzenleme</h1>
       <p className={styles.category}>{template.category}</p>
       
-      {/* Basit ve Stabil Textarea */}
       <textarea
         ref={editorRef}
         className={styles.editor}
@@ -56,17 +72,12 @@ export default function ContractEditor() {
           Kaydet
         </button>
         
-        <div className={styles.exportButton}>
-          <PDFDownloadLink
-            document={<PdfDocument title={template.title} content={content} />}
-            fileName={`${template.title.replace(/\s+/g, '_')}.pdf`}
-            onClick={() => setIsGeneratingPDF(true)}
-          >
-            {({ loading }) => (
-              loading || isGeneratingPDF ? 'PDF Hazırlanıyor...' : 'PDF Olarak İndir'
-            )}
-          </PDFDownloadLink>
-        </div>
+        <button 
+          onClick={handleExportPDF} 
+          className={styles.exportButton}
+        >
+          PDF Olarak İndir
+        </button>
       </div>
     </div>
   );
