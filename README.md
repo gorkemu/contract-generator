@@ -1,43 +1,84 @@
 # Contract-Generator  
 
-**Purpose**: A web app for editing templates with perfect Turkish character support in PDF exports.
+**Purpose**: A web app for creating and editing legal templates with perfect Turkish character support in PDF exports.
 
 ## ✨ Features
-- [x] Template management (read/edit)
-- [x] In-place variable editing (double-click/long press)
-- [x] Multi-page PDF generation with Turkish characters
+- [x] Dual-mode editing (variables & full content)
+- [x] Clause management (add/remove paragraphs)
 - [x] Real-time preview with validation
+- [x] Multi-page PDF generation with Turkish characters
 - [ ] User authentication
+- [ ] Version history
 
 ## 🛠 Technical Stack
-- Frontend: Vite + React (JavaScript)
+### Frontend
+- Vite + React (JavaScript)
 - PDF Generation: pdf-lib + fontkit
+- State Management: React Context
 - Routing: react-router-dom@7
-- Styling: CSS Modules
-- Interaction: Touch & mouse support
 
-## ⚠ Critical Notes
-1. **Font Requirement**:  
-   Must have `public/fonts/NotoSans-Regular.ttf` for proper Turkish character rendering.
+### Styling & Interaction
+- CSS Modules with responsive design
+- Touch & mouse support
+- In-place editing (double-click/long press)
 
-2. **Template Structure**:
-   - Uses `{{variable}}` syntax for editable fields
-   - Supports multi-line clauses
-   - Automatic page breaking
-   - In-place editing (no separate form panel)
+## 🚀 Getting Started
 
-3. **Testing**:
+1. **Prerequisites**
+```bash
+# Font installation
+mkdir -p public/fonts && curl -o public/fonts/NotoSans-Regular.ttf https://fonts.gstatic.com/s/notosans/v15/o-0IIpQlx3QUlC5A4PNr5TRF.ttf
+```
+2. **Development**
+```bash
+npm install
+npm run dev
+```
+## 🎯 Interaction Guide
+```mermaid
+graph TB
+    A[Preview] -->|Double-click| B[Edit Variable]
+    A -->|Long-press| B
+    A -->|Content Mode| C[Edit Any Text]
+    C -->|Add Clause| D[+ Button]
+    C -->|Remove Clause| E[Delete Button]
+```
+
+## Key Shortcuts:
+
+- Enter: Save edits
+- Escape: Cancel edit
+- Ctrl+Z: Undo (coming soon)    
+
+## Important Notes:
+**Template Structure**
+```json
+{
+  "title": "Kira Sözleşmesi",
+  "content": "Kiracı: {{kiracı}}\n\n**MADDELER**:\n1. {{madde1}}",
+  "variables": {
+    "kiracı": { "type": "text", "required": true }
+  }
+}
+```
+
+## Known Issues
+1. Content persistence requires backend integration
+2. Mobile touch gestures may need refinement
+3. Canceling edits doesn't restore previous state
+
+## 🔧 Testing
 ```javascript
-// Verify in-place editing
-test('Edits variables directly in preview', () => {
+
+// Test clause management
+test('Adds new contract clauses', () => {
   render(<ContractEditor />);
-  const variableElement = screen.getByText('[kiracı]');
-  fireEvent.doubleClick(variableElement);
-  expect(screen.getByPlaceholderText('kiracı girin')).toBeInTheDocument();
+  userEvent.click(screen.getByText('+ Add Clause'));
+  expect(screen.getByText('NEW CLAUSE')).toBeInTheDocument();
 });
 ```
-## 🎯 New Interaction Guide
-- **Edit Variables**: Double-click or long-press (1s) on any variable in the preview
-- **Save Changes**: Press Enter or click outside the field
-- **Cancel Edit**: Press Escape
-- **Validation**: Empty required fields highlight in red
+## Roadmap
+- MongoDB integration for templates
+- Undo/redo functionality
+- Collaborative editing
+- Template marketplace
