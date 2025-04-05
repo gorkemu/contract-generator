@@ -11,6 +11,9 @@ export default function ContractEditor() {
   const [editingVar, setEditingVar] = useState(null);
   const [tempValue, setTempValue] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
+  const [editingMode, setEditingMode] = useState('variables');
+  const [editableContent, setEditableContent] = useState('');
+  const [currentEditParagraph, setCurrentEditParagraph] = useState(null);
   const inputRef = useRef(null);
   const pressTimer = useRef(null);
   const editModeRef = useRef(false);
@@ -22,6 +25,7 @@ export default function ContractEditor() {
         if (foundTemplate) {
           setTemplate(foundTemplate);
           setVariables(foundTemplate.variables || {});
+          setEditableContent(foundTemplate.content);
         } else {
           navigate('/');
         }
@@ -36,7 +40,6 @@ export default function ContractEditor() {
   };
 
   const handleExportPDF = async () => {
-    // Check for required fields
     const errors = {};
     Object.keys(template.variables || {}).forEach(key => {
       if (!variables[key]?.trim()) {
@@ -50,15 +53,7 @@ export default function ContractEditor() {
     }
 
     try {
-      let filledContent = template.content;
-      Object.keys(variables).forEach(key => {
-        filledContent = filledContent.replace(
-          new RegExp(`{{${key}}}`, 'g'),
-          variables[key]
-        );
-      });
-
-      const pdfBytes = await generateContractPDF(template.title, filledContent);
+      const pdfBytes = await generateContractPDF(template.title, editableContent, variables);
       
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
@@ -83,6 +78,36 @@ export default function ContractEditor() {
         inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 100);
+  };
+
+  const startEditParagraph = (paragraphIndex) => {
+    setEditingMode('content');
+    setCurrentEditParagraph(paragraphIndex);
+    setTempValue(editableContent.split('\n')[paragraphIndex]);
+  };
+
+  const saveParagraphEdit = () => {
+    if (currentEditParagraph !== null) {
+      const lines = editableContent.split('\n');
+      lines[currentEditParagraph] = tempValue;
+      setEditableContent(lines.join('\n'));
+      setCurrentEditParagraph(null);
+    }
+  };
+
+  const addNewParagraph = () => {
+    const lines = editableContent.split('\n');
+    lines.push('\n**YENİ MADDE**\nYeni madde içeriği buraya...');
+    setEditableContent(lines.join('\n'));
+  };
+
+  const deleteParagraph = () => {
+    if (currentEditParagraph !== null) {
+      const lines = editableContent.split('\n');
+      lines.splice(currentEditParagraph, 1);
+      setEditableContent(lines.join('\n'));
+      setCurrentEditParagraph(null);
+    }
   };
 
   const handleLongPressStart = (key, value) => {
@@ -117,59 +142,120 @@ export default function ContractEditor() {
 
   const handleOutsideClick = (e) => {
     if (e.target.closest(`.${styles.variableInputEdit}`)) return;
-    saveEdit();
+    if (editingMode === 'content' && currentEditParagraph !== null) {
+      saveParagraphEdit();
+    } else {
+      saveEdit();
+    }
   };
 
   if (!template) return <div className={styles.loading}>Yükleniyor...</div>;
 
   return (
     <div className={styles.container} onClick={handleOutsideClick}>
+      <div className={styles.modeSwitch}>
+        <button 
+          onClick={() => setEditingMode('variables')}
+          disabled={editingMode === 'variables'}
+          className={editingMode === 'variables' ? styles.activeMode : ''}
+        >
+          Değişkenleri Düzenle
+        </button>
+        <button 
+          onClick={() => setEditingMode('content')}
+          disabled={editingMode === 'content'}
+          className={editingMode === 'content' ? styles.activeMode : ''}
+        >
+          İçeriği Düzenle
+        </button>
+      </div>
+
+      {editingMode === 'content' && (
+        <div className={styles.contentActions}>
+          <button onClick={addNewParagraph} className={styles.addButton}>
+            + Madde Ekle
+          </button>
+          {currentEditParagraph !== null && (
+            <button 
+              onClick={deleteParagraph}
+              className={styles.deleteButton}
+            >
+              Maddeyi Sil
+            </button>
+          )}
+        </div>
+      )}
+
       <div className={styles.contentPanel}>
         <h1>{template.title}</h1>
         <p className={styles.category}>{template.category}</p>
         
         <div className={styles.preview}>
-          {template.content.split('\n').map((paragraph, i) => (
-            <p key={i}>
-              {paragraph.split(/({{.*?}})/g).map((part, j) => {
-                const variableMatch = part.match(/{{(.*?)}}/);
-                if (variableMatch) {
-                  const varKey = variableMatch[1];
-                  const isEditing = editingVar === varKey;
-                  const isEmpty = !variables[varKey]?.trim();
-                  
-                  return isEditing ? (
-                    <span key={j} className={styles.variableInputEdit}>
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={tempValue}
-                        onChange={(e) => setTempValue(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        className={validationErrors[varKey] ? styles.errorInput : ''}
-                        placeholder={`${varKey.replace(/_/g, ' ')} girin`}
-                      />
-                      {validationErrors[varKey] && (
-                        <span className={styles.errorTooltip}>Bu alan zorunludur</span>
-                      )}
-                    </span>
-                  ) : (
-                    <span
-                      key={j}
-                      className={`${styles.variableHighlight} ${isEmpty ? styles.emptyVariable : ''}`}
-                      onDoubleClick={() => startEdit(varKey, variables[varKey] || '')}
-                      onTouchStart={() => handleLongPressStart(varKey, variables[varKey] || '')}
-                      onTouchEnd={handleLongPressEnd}
-                      onTouchMove={handleLongPressEnd}
-                    >
-                      {variables[varKey] || `[${varKey}]`}
-                    </span>
-                  );
-                }
-                return part;
-              })}
-            </p>
-          ))}
+          {editableContent.split('\n').map((paragraph, i) => {
+            if (editingMode === 'content' && currentEditParagraph === i) {
+              return (
+                <div key={i} className={styles.paragraphEdit}>
+                  <textarea
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    onBlur={saveParagraphEdit}
+                    onKeyDown={(e) => e.key === 'Enter' && saveParagraphEdit()}
+                    autoFocus
+                  />
+                  <div className={styles.editButtons}>
+                    <button onClick={saveParagraphEdit} className={styles.saveButton}>Kaydet</button>
+                    <button onClick={() => setCurrentEditParagraph(null)} className={styles.cancelButton}>İptal</button>
+                  </div>
+                </div>
+              );
+            }
+            
+            return (
+              <p 
+                key={i} 
+                className={`${styles.editableParagraph} ${editingMode === 'content' ? styles.contentEditMode : ''}`}
+                onDoubleClick={() => editingMode === 'content' && startEditParagraph(i)}
+              >
+                {paragraph.split(/({{.*?}})/g).map((part, j) => {
+                  const variableMatch = part.match(/{{(.*?)}}/);
+                  if (variableMatch) {
+                    const varKey = variableMatch[1];
+                    const isEditing = editingVar === varKey;
+                    const isEmpty = !variables[varKey]?.trim();
+                    
+                    return isEditing ? (
+                      <span key={j} className={styles.variableInputEdit}>
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={tempValue}
+                          onChange={(e) => setTempValue(e.target.value)}
+                          onKeyDown={handleKeyDown}
+                          className={validationErrors[varKey] ? styles.errorInput : ''}
+                          placeholder={`${varKey.replace(/_/g, ' ')} girin`}
+                        />
+                        {validationErrors[varKey] && (
+                          <span className={styles.errorTooltip}>Bu alan zorunludur</span>
+                        )}
+                      </span>
+                    ) : (
+                      <span
+                        key={j}
+                        className={`${styles.variableHighlight} ${isEmpty ? styles.emptyVariable : ''}`}
+                        onDoubleClick={() => editingMode === 'variables' && startEdit(varKey, variables[varKey] || '')}
+                        onTouchStart={() => editingMode === 'variables' && handleLongPressStart(varKey, variables[varKey] || '')}
+                        onTouchEnd={handleLongPressEnd}
+                        onTouchMove={handleLongPressEnd}
+                      >
+                        {variables[varKey] || `[${varKey}]`}
+                      </span>
+                    );
+                  }
+                  return part;
+                })}
+              </p>
+            );
+          })}
         </div>
 
         <button 
