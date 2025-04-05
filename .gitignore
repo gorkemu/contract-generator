@@ -7,18 +7,65 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
+# Dependency directories
+**/node_modules/
+!client/node_modules/ # Monorepo için özel izin (opsiyonel)
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+.out/
+.next/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Editor files
+.vscode/
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+.DS_Store
+
+# System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Testing
+coverage/
+.nyc_output/
+
+# Debug
+debug.log
+
+# Backend-specific
+server/.env
+server/uploads/
+server/temp/
+
+# Frontend-specific
+client/.env
+client/.svelte-kit
+client/package-lock.json
+
+# AI/ML models (promptlar hariç)
+*.bin
+*.h5
+*.pt
+*.pkl
+
+# Özel ayarlar
+*.local
+.eslintcache
