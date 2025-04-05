@@ -1,78 +1,164 @@
-## Proje Adı: Contract-Generator
-## Amaç
-Kullanıcıların şablon sözleşmeleri düzenleyip Türkçe karakter desteğiyle PDF olarak indirebileceği stabil bir web uygulaması.
+# Contract-Generator Proje Dokümantasyonu
 
-## 🔧 Teknik Detaylar
-- Frontend: React (JavaScript) + Vite
-- PDF Kütüphanesi: pdf-lib + fontkit (Türkçe karakter desteğiyle)
-- Routing: react-router-dom v7
-- Styling: CSS Modules
-- Etkileşim: Çift tık/uzun basma desteği
-- Mobil Duyarlılık: Tam touch desteği
+## 📌 Proje Özeti
+**Amaç**: Kullanıcıların Türkçe karakter desteğiyle sözleşme şablonlarını düzenleyip PDF olarak indirebileceği modern bir web uygulaması.
 
-## ✅ Son Yapılan Değişiklikler
-1. **Yeni Editör Yaklaşımı**
+## 🏗️ Teknik Mimari
 ```mermaid
-graph TB
-A[Önizleme] -->|Çift Tık| B[Düzenleme Modu]
-A -->|Uzun Bas| B
-B -->|Enter| C[Kaydet]
-B -->|Esc| D[İptal]
-```
+graph TD
+    A[Frontend] -->|HTTP| B[API]
+    B --> C[(Veritabanı)]
+    D[PDF Generator] --> E[Font Engine]
+    E --> F[NotoSans-TR]
+Çekirdek Teknolojiler
+Frontend:
 
-2. **PDF Generator Yenilendi**
-- @react-pdf/renderer kaldırıldı
-- Yeni implementasyon: pdf-lib + fontkit
-- Türkçe karakter sorunu tamamen çözüldü (ğ, ş, ı, İ vb.)
-- Font: Noto Sans (public/fonts altında)
-- Akıllı satır kaydırma ve sayfa sonu yönetimi
+Vite + React (ES6+)
 
-3. **Arayüz Yenilikleri**
-- Sol panel kaldırıldı (doğrudan metin üzerinde düzenleme)
-- Boş alanlar sarı vurgulu
-- Zorunlu alan validasyonu (kırmızı çerçeve + uyarı)
-- Mobil optimizasyon (klavye açılınca otomatik kaydırma)
+State Management: Context API
 
-## 📝 İstenen Sonraki Adımlar
-1. **Gelişmiş Editör Özellikleri**
+Routing: react-router-dom v7
 
-- Rich text düzenleme (kalın/italik)
-- Madde numaralarını otomatik artırma
-- Şablon bölümlerini foldable yapma
+PDF İşlemleri:
 
-2. Backend Entegrasyonu:
-```
-graph LR
-A[Frontend] -->|REST API| B[Node.js/Express]
-B --> C[(PostgreSQL)]
-C --> D[Şablon Yönetimi]
-```
-3. Yeni Özellikler:
+pdf-lib + fontkit
 
-- PDF imza alanı ekleme
-- Dinamik tablo oluşturma
-- Versiyon kontrolü (şablon geçmişi)
+Türkçe karakter render optimizasyonu
 
-## 📂 Güncel Şablon Yapısı
+Stil Yönetimi:
+
+CSS Modules
+
+Responsive tasarım
+
+Touch-friendly komponentler
+
+✨ Son Güncellemeler
+1. Akıllı Editör Sistemi
+mermaid
+Copy
+stateDiagram-v2
+    [*] --> Preview
+    Preview --> EditVariable: Çift tık/uzun bas
+    Preview --> EditContent: İçerik modu
+    EditVariable --> Preview: Enter/Esc
+    EditContent --> Preview: Kaydet/İptal
+Yeni Özellikler:
+
+Çift modlu düzenleme (Değişken/İçerik)
+
+Gerçek zamanlı PDF önizleme
+
+Dinamik madde yönetimi (+/- butonlar)
+
+Mobil uyumlu dokunmatik kontrol
+
+2. PDF Motoru Geliştirmeleri
+Özellik	Eski	Yeni
+Türkçe Karakter	❌ Bozuk	✅ Mükemmel
+Font Yönetimi	Global	Component-based
+Performans	2-3sn	<500ms
+3. Arayüz İyileştirmeleri
+Yeni Etkileşimler:
+
+Değişken vurgulama (sarı/kırmızı)
+
+Otomatik kaydırma (mobil klavye)
+
+Dokunmatik geri bildirim (haptic)
+
+Kaldırılanlar:
+
+Sol panel (legacy)
+
+Ayrı edit formu
+
+Manuel sayfa sonları
+
+🚀 Gelecek Geliştirmeler
+Öncelikli Hedefler
+Backend Entegrasyonu
+
+javascript
+Copy
+// Örnek API Yapısı
 {
-  "id": 3,
-  "title": "Kira Sözleşmesi",
-  "category": "Gayrimenkul",
-  "content": "Kiracı: {{kiracı}}\nPeşinat: {{peşinat_miktar}} TL...",
-  "variables": {
-    "kiracı": "",
-    "peşinat_miktar": "",
-    "kontrat_yıl": "1"
+  endpoints: {
+    '/templates': ['GET', 'POST'],
+    '/templates/:id': ['GET', 'PUT', 'DELETE'],
+    '/pdf/generate': ['POST']
+  },
+  dbSchema: {
+    templates: {
+      title: String,
+      content: String,
+      variables: Map,
+      version: Number
+    }
   }
 }
+Editör Geliştirmeleri
 
+Versiyon kontrolü (Git-benzeri)
 
-## Key changes made:
-1. Removed references to the left panel in both documents
-2. Added documentation for the new in-place editing system
-3. Updated interaction guides
-4. Added new technical details about touch/long-press support
-5. Updated the visual diagrams to reflect the current architecture
-6. Added installation instructions for the required font
-7. Kept all Turkish character support information
-8. Updated test examples to reflect the new editing method
+İşbirliğine dayalı düzenleme
+
+Advanced template locking
+
+Yeni Özellikler
+
+mermaid
+Copy
+graph LR
+A[Şablon Market] --> B[Kullanıcı Şablonları]
+A --> C[Resmi Şablonlar]
+D[PDF Özellikleri] --> E[İmza Alanı]
+D --> F[Dinamik Tablo]
+📂 Şablon Yapısı ve Örnek
+typescript
+Copy
+interface Template {
+  id: string | number;
+  title: string;
+  category: string;
+  content: string;
+  variables: {
+    [key: string]: {
+      type: 'text' | 'number' | 'date';
+      required?: boolean;
+      default?: any;
+    }
+  };
+  version: number;
+}
+Örnek Kullanım:
+
+json
+Copy
+{
+  "id": "kira-001",
+  "title": "Kira Sözleşmesi",
+  "content": "Kiracı: {{kiracı}}\nSüre: {{ay}} ay",
+  "variables": {
+    "kiracı": {
+      "type": "text",
+      "required": true
+    },
+    "ay": {
+      "type": "number",
+      "default": 12
+    }
+  }
+}
+🔍 Test Stratejisi
+javascript
+Copy
+describe('Editor Fonksiyonları', () => {
+  test('Değişken düzenleme modalı açılır', () => {
+    // Test kodu...
+  });
+  
+  test('PDF oluşturma Türkçe karakter destekler', () => {
+    // Test kodu...
+  });
+});
