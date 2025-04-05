@@ -1,7 +1,16 @@
+// client/src/components/ContractEditor.jsx
+/**
+ * Revize Özeti:
+ * - API entegrasyonu eklendi
+ * - Yükleme durumu ve hata yönetimi eklendi
+ * - Veriler artık MongoDB'den çekiliyor
+ */
+
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './ContractEditor.module.css';
 import { generateContractPDF } from '../utils/pdfGenerator';
+import { getContracts } from '../utils/api';
 
 export default function ContractEditor() {
   const { id } = useParams();
@@ -14,14 +23,19 @@ export default function ContractEditor() {
   const [editingMode, setEditingMode] = useState('variables');
   const [editableContent, setEditableContent] = useState('');
   const [currentEditParagraph, setCurrentEditParagraph] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const inputRef = useRef(null);
   const pressTimer = useRef(null);
   const editModeRef = useRef(false);
 
   useEffect(() => {
-    import('../data/templates.json')
-      .then(data => {
-        const foundTemplate = data.default.find(t => t.id === parseInt(id));
+    const fetchTemplate = async () => {
+      try {
+        setLoading(true);
+        const templates = await getContracts();
+        const foundTemplate = templates.find(t => t._id === id);
+        
         if (foundTemplate) {
           setTemplate(foundTemplate);
           setVariables(foundTemplate.variables || {});
@@ -29,7 +43,15 @@ export default function ContractEditor() {
         } else {
           navigate('/');
         }
-      });
+      } catch (err) {
+        console.error('Template yükleme hatası:', err);
+        setError('Şablon yüklenirken bir hata oluştu');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTemplate();
   }, [id, navigate]);
 
   const handleVariableChange = (key, value) => {
@@ -53,7 +75,11 @@ export default function ContractEditor() {
     }
 
     try {
-      const pdfBytes = await generateContractPDF(template.title, editableContent, variables);
+      const pdfBytes = await generateContractPDF(
+        template.title, 
+        editableContent, 
+        variables
+      );
       
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
@@ -63,7 +89,7 @@ export default function ContractEditor() {
       link.click();
     } catch (error) {
       console.error('PDF oluşturma hatası:', error);
-      alert('PDF oluşturulamadı!');
+      setError('PDF oluşturulamadı!');
     }
   };
 
@@ -150,6 +176,9 @@ export default function ContractEditor() {
   };
 
   if (!template) return <div className={styles.loading}>Yükleniyor...</div>;
+  if (loading) return <div className={styles.loading}>Yükleniyor...</div>;
+  if (error) return <div className={styles.error}>{error}</div>;
+  if (!template) return <div className={styles.error}>Şablon bulunamadı</div>;
 
   return (
     <div className={styles.container} onClick={handleOutsideClick}>
