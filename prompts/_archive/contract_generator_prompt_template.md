@@ -1,6 +1,7 @@
 # Contract-Generator Proje Geliştirme Promptu
-## Versiyon: 1.3.0  
-## Son Güncelleme: 2023-12-15  
+## Sürüm Takibi
+### Mevcut Versiyon: 1.3.0  
+## Son Güncelleme: 2025-4-5  
 
 ### 📌 Mevcut Durum
 **Açıklama**:  
@@ -15,7 +16,7 @@ graph TD
     D -.-> E[(Future MongoDB)]
 ```
 
-### ✅ **Son Tamamlananlar**
+### ✅ Son Tamamlananlar
 1. **Çift Modlu Editör**
 - Değişken/İçerik mod geçişi
 - Madde ekleme/silme butonları
@@ -31,7 +32,7 @@ graph TD
 - İmleç odak yönetimi
 - Validasyon görsel iyileştirmeleri    
 
-### 🐛 **Aktif Sorunlar**
+### 🐛 Aktif Sorunlar
 
 | No | Sorun | Öncelik | Çözüm Önerisi |
 |----|-------|---------|---------------|
@@ -39,7 +40,7 @@ graph TD
 | 2  | Editör fare tıklamalarında kapanıyor | High | Click-outside algılama fix |
 | 3  | İptal butonu önceki state'i restore etmiyor | Medium | State snapshot mekanizması |
 
-### 📝 **İstenen Geliştirmeler**
+### 📝 İstenen Geliştirmeler
 
 ```mermaid
 graph TB
@@ -50,7 +51,7 @@ graph TB
     G[Yeni Özellikler] --> H[Şablon Paylaşım]
 ```
 
-### 🔄 **Değişiklik Talepleri**
+### 🔄 Değişiklik Talepleri
 
 **1. src/utils/db.js (Yeni):**
 ```javascript
@@ -63,17 +64,19 @@ const templateSchema = new mongoose.Schema({
 });
 ```
 **2. src/components/ContractEditor.jsx:**
+```diff
 - const handleOutsideClick = (e) => { ... }
 + const handleOutsideClick = useCallback((e) => {
 +   if (!e.target.closest('.editor-area')) saveEdit();
 + }, []);
+```
 
-### 📜 **Dokümantasyon Güncellemeleri**
+### 📜 Dokümantasyon Güncellemeleri
 - `README.md`
-- `API_DOCS.md` (Backend sonrası)
-- `ARCHITECTURE.md`
+- `prompts\_archive\contract_generator_prompt_template.md`
+- `prompts\contract_generator_prompt_v1.3.0.md`
 
-### 💡 **Özel Notlar**
+### 💡 Özel Notlar
 - Öncelik sırası:
   1. MongoDB bağlantısı
   2. Editör davranış fixleri
@@ -90,9 +93,9 @@ const templateSchema = new mongoose.Schema({
 
 2. Versiyonlama için semantik versiyonlama (SemVer) kullanın:
 
-MAJOR: Büyük mimari değişiklikler
-MINOR: Yeni özellikler
-PATCH: Bug fixleri
+- **MAJOR**: Büyük mimari değişiklikler
+- **MINOR**: Yeni özellikler
+- **PATCH**: Bug fixleri
 
 3. Yeni asistana iletilirken:
 ```markdown
@@ -101,13 +104,18 @@ Lütfen aşağıdaki prompt dosyasını inceleyerek projeye katkı sağlayın:
 ```
 
 4. Güncelleme yaparken
-# Önceki versiyonu arşivle
-mv prompts/contract_generator_prompt_v1.3.0.md prompts/archive/
+### Önceki versiyonu arşivle
+```bash
+mv prompts/contract_generator_prompt_v1.3.0.md prompts/_archive/
+```
 
-# Yeni versiyonu oluştur
+### Yeni versiyonu oluştur
+```bash
 touch prompts/contract_generator_prompt_v1.4.0.md
+```
 
 ## Dosya Yapısı Örneği
+```plaintext
 my-project/
 ├── prompts/
 │   ├── contract_generator_prompt_v1.3.0.md
@@ -116,6 +124,6 @@ my-project/
 │       └── v1.1.0.md
 └── src/
     └── ... # Proje dosyaları
-
+```
 
 
