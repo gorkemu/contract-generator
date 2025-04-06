@@ -69,3 +69,6 @@ client/package-lock.json
 # Özel ayarlar
 *.local
 .eslintcache
+
+# Prompt dosyaları
+prompts/
