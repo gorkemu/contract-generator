@@ -71,4 +71,4 @@ client/package-lock.json
 .eslintcache
 
 # Prompt dosyaları
-prompts/
+prompt.md
