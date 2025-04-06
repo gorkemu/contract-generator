@@ -1,7 +1,9 @@
 // client/src/components/ContractEditor.jsx
 /**
  * Revize Özeti:
- * - "+" butonlarının her blok arasında görünmesi için düzenleme yapıldı.
+ * - Değişken ve içerik düzenleme alanlarındaki onBlur olayları kaldırıldı.
+ * - Düzenleme modundan çıkış artık sadece Kaydet veya İptal butonları ile ya da değişken düzenleme için Enter/Escape tuşları ile sağlanıyor.
+ * - handleOutsideClick fonksiyonu sadece değişken düzenleme inputunun dışına tıklanıldığında çalışacak şekilde düzenlendi.
  */
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -169,15 +171,14 @@ export default function ContractEditor() {
     };
 
     const handleOutsideClick = (e) => {
-        if (e.target.closest(`.${styles.variableInputEdit}`)) return;
-        if (editingMode === 'content') {
-            if (currentEditIndex !== null) {
-                saveParagraphEdit(currentEditIndex);
-            } else if (newParagraphIndex !== null) {
-                insertNewParagraph(newParagraphIndex);
-            }
-        } else {
+        if (editingVar && !e.target.closest(`.${styles.variableInputEdit}`)) {
             saveVariableEdit();
+        }
+        if (newParagraphIndex !== null && !e.target.closest(`.${styles.paragraphEdit}`)) {
+            setNewParagraphIndex(null);
+        }
+        if (currentEditIndex !== null && !e.target.closest(`.${styles.paragraphEdit}`)) {
+            setCurrentEditIndex(null);
         }
     };
 
@@ -217,8 +218,6 @@ export default function ContractEditor() {
                                         <textarea
                                             value={tempValue}
                                             onChange={(e) => setTempValue(e.target.value)}
-                                            onBlur={() => insertNewParagraph(i)}
-                                            onKeyDown={(e) => e.key === 'Enter' && insertNewParagraph(i)}
                                             autoFocus
                                             placeholder="Yeni madde içeriği..."
                                         />
@@ -233,8 +232,6 @@ export default function ContractEditor() {
                                         <textarea
                                             value={tempValue}
                                             onChange={(e) => setTempValue(e.target.value)}
-                                            onBlur={() => saveParagraphEdit(i)}
-                                            onKeyDown={(e) => e.key === 'Enter' && saveParagraphEdit(i)}
                                             autoFocus
                                         />
                                         <div className={styles.editButtons}>
@@ -284,11 +281,11 @@ export default function ContractEditor() {
                                         })}
                                     </p>
                                 )}
-                                {editingMode === 'content' && editableContent.length > 1 && (
+                                {editingMode === 'content' && editableContent.length > 1 && currentEditIndex !== i && newParagraphIndex !== i && (
                                     <button onClick={() => deleteParagraph(i)} className={styles.deleteButton}>-</button>
                                 )}
                             </div>
-                            {editingMode === 'content' && (
+                            {editingMode === 'content' && currentEditIndex !== i && newParagraphIndex !== i && (
                                 <div className={styles.addParagraphBelow}>
                                     <button onClick={() => addNewParagraph(i)} className={styles.addButton}>+</button>
                                 </div>
@@ -300,8 +297,6 @@ export default function ContractEditor() {
                             <textarea
                                 value={tempValue}
                                 onChange={(e) => setTempValue(e.target.value)}
-                                onBlur={() => insertNewParagraph(editableContent.length)}
-                                onKeyDown={(e) => e.key === 'Enter' && insertNewParagraph(editableContent.length)}
                                 autoFocus
                                 placeholder="Yeni madde içeriği..."
                             />
@@ -311,9 +306,11 @@ export default function ContractEditor() {
                             </div>
                         </div>
                     )}
-                    
-                       
-                    
+                    {editingMode === 'content' && editableContent.length > 0 && newParagraphIndex !== editableContent.length && (
+                        <div className={styles.addParagraphBelow}>
+                            <button onClick={() => addNewParagraph(editableContent.length)} className={styles.addButton}>+</button>
+                        </div>
+                    )}
                 </div>
 
                 <button
