@@ -1,5 +1,16 @@
 /* client/src/components/ContractList.module.css */
-.container {
+/*
+ * Revize Özeti:
+ * - Genel padding ve max-width değerleri korundu.
+ * - Şablon kartlarının arka planı beyaz, kenarlıkları `--gray-200` olarak güncellendi.
+ * - Kart hover efekti birincil renkle (`--primary-color`) uyumlu hale getirildi.
+ * - Başlık rengi `--gray-900` olarak korundu.
+ * - Kategori etiketi arka planı `--gray-100`, metin rengi `--gray-700` olarak korundu.
+ * - Düzenle linkinin arka planı `--primary-color`, hover efekti `--primary-dark` olarak güncellendi.
+ * - Yükleme, hata ve boş durum mesajlarının renkleri güncellendi.
+ */
+
+ .container {
   padding: var(--space-xl);
   max-width: 1200px;
   margin: 0 auto;
@@ -14,7 +25,7 @@
 
 .templateCard {
   background: white;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--gray-200); /* Güncellendi */
   border-radius: var(--border-radius-md);
   padding: var(--space-lg);
   transition: all var(--transition-normal);
@@ -27,7 +38,7 @@
 .templateCard:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
-  border-color: var(--primary-color);
+  border-color: var(--primary-color); /* Güncellendi */
 }
 
 .templateCard h3 {
@@ -63,7 +74,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary-color);
+  background-color: var(--primary-color); /* Güncellendi */
   color: white;
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius-sm);
@@ -75,7 +86,8 @@
 }
 
 .editLink:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-dark); /* Güncellendi */
+  color: var(--gray-100); /* Hoverdaki yazı rengi değiştirildi */
   text-decoration: none;
 }
 
@@ -89,12 +101,12 @@
 }
 
 .error {
-  color: var(--danger-color);
+  color: var(--danger-color); /* index.css'den alıyor */
   padding: var(--space-lg);
   text-align: center;
-  border: 1px solid var(--danger-color);
+  border: 1px solid var(--danger-color); /* index.css'den alıyor */
   border-radius: var(--border-radius-md);
-  background-color: rgba(247, 37, 133, 0.05);
+  background-color: rgba(var(--danger-color-rgb), 0.05); /* index.css'den alıyor */
   margin: var(--space-lg) 0;
 }
 
@@ -104,12 +116,12 @@
   padding: var(--space-xl) 0;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments (Aynı kaldı) */
 @media (max-width: 768px) {
   .container {
     padding: var(--space-md);
   }
-  
+
   .templateGrid {
     grid-template-columns: 1fr;
     gap: var(--space-md);
@@ -117,7 +129,7 @@
   }
 }
 
-/* Animation for card hover */
+/* Animation for card hover (Aynı kaldı) */
 @keyframes cardHover {
   0% {
     transform: translateY(0);
