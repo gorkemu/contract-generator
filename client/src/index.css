@@ -9,7 +9,10 @@
  * - Gri tonları daha dengeli bir şekilde güncellendi.
  */
 
- :root {
+/* Inter fontunu ekle (Aynı kaldı) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
   /* Yenilenmiş Renk Paleti (Daha Ciddi ve Gözü Yormayan) */
   --primary-color: #4c6ef5; /* Daha soft bir mavi */
   --primary-light: #a3bded;
@@ -83,9 +86,6 @@
   --transition-slow: 300ms ease;
   --transition-bounce: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-/* Inter fontunu ekle (Aynı kaldı) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
   margin: 0;
