@@ -1,3 +1,4 @@
+// client\src\utils\pdfGenerator.js
 import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 

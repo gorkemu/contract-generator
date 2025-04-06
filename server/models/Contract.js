@@ -1,3 +1,4 @@
+// server\models\Contract.js
 import mongoose from 'mongoose';
 
 const contractSchema = new mongoose.Schema({

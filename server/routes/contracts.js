@@ -1,3 +1,4 @@
+// server\routes\contracts.js
 import express from 'express';
 import Contract from '../models/Contract.js';
 import { readFile } from 'fs/promises';
