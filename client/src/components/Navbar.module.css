@@ -1,25 +1,94 @@
+/* client/src/components/Navbar.module.css */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #333;
-    color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-xl);
+  background-color: var(--gray-900);
+  color: white;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-weight: var(--font-weight-bold);
+  font-size: 1.25rem;
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  transition: opacity var(--transition-fast);
+}
+
+.logo:hover {
+  opacity: 0.9;
+  text-decoration: none;
+}
+
+.links {
+  display: flex;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.links a {
+  color: var(--gray-200);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-xs) 0;
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+.links a:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-color);
+  transition: width var(--transition-normal);
+}
+
+.links a:hover::after {
+  width: 100%;
+}
+
+/* Active link state */
+.links a[aria-current="page"] {
+  color: white;
+}
+
+.links a[aria-current="page"]::after {
+  width: 100%;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: var(--space-md);
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: flex-start;
   }
-  
-  .logo {
-    font-weight: bold;
-    font-size: 1.5rem;
-    color: white;
-    text-decoration: none;
+
+  .links {
+    width: 100%;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: flex-start;
   }
-  
+
   .links a {
-    color: white;
-    text-decoration: none;
-    margin-left: 1rem;
+    padding: var(--space-sm) 0;
   }
-  
-  .links a:hover {
-    text-decoration: underline;
-  }
+}
