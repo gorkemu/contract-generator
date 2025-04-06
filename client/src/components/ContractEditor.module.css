@@ -1,5 +1,20 @@
 /* client/src/components/ContractEditor.module.css */
-.container {
+/*
+ * Revize Özeti:
+ * - Genel arka plan rengi `--gray-50` olarak ayarlandı.
+ * - İçerik paneli arka planı beyaz (`white`) ve kenarlıkları `--gray-200` olarak düzenlendi.
+ * - Başlık rengi `--gray-900` olarak korundu.
+ * - Kategori etiketi birincil renkle (`--primary-color`) uyumlu hale getirildi.
+ * - Mod değiştirici (mode switch) renkleri ve aktif durum stili güncellendi.
+ * - Paragraf konteyner ve aktif paragraf stilleri daha belirgin hale getirildi.
+ * - Düzenleme alanı (textarea) odak stili birincil renge göre ayarlandı.
+ * - Buton renkleri (kaydet, iptal, sil) yeni palete uygun şekilde düzenlendi.
+ * - "PDF Oluştur" butonu birincil renk ve hover efektiyle güncellendi.
+ * - Bölücü (divider) ve ekleme butonu renkleri birincil renge göre ayarlandı.
+ * - Değişken vurgulama (variable highlight) renkleri daha soft hale getirildi.
+ */
+
+ .container {
   max-width: 1000px;
   margin: 0 auto;
   padding: var(--space-xl);
@@ -7,6 +22,7 @@
 
 .contentPanel {
   background: white;
+  border: 1px solid var(--gray-200); /* Güncellendi */
   border-radius: var(--border-radius-lg);
   padding: var(--space-xl);
   box-shadow: var(--shadow-sm);
@@ -19,11 +35,11 @@ h1 {
 
 .category {
   display: inline-block;
-  color: var(--gray-600);
+  color: var(--primary-color); /* Güncellendi */
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-xl);
   padding-bottom: var(--space-xs);
-  border-bottom: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color); /* Güncellendi */
 }
 
 .editorControls {
@@ -75,7 +91,7 @@ h1 {
   padding: var(--space-md);
   border-radius: var(--border-radius-md);
   background-color: white;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--gray-200); /* Güncellendi */
   transition: all var(--transition-fast);
 }
 
@@ -95,6 +111,10 @@ h1 {
 
 .editableParagraph:hover {
   background-color: var(--gray-100);
+}
+
+.contentEditMode:hover {
+  background-color: rgba(var(--primary-color-rgb), 0.05); /* Eğer gerekirse rgba cinsinden birincil renk */
 }
 
 .paragraphEdit {
@@ -120,7 +140,7 @@ h1 {
 .paragraphEdit textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2); /* Eğer gerekirse rgba cinsinden birincil renk */
 }
 
 .editButtons {
@@ -136,17 +156,17 @@ h1 {
   padding: 0 var(--space-xs);
   border-radius: var(--border-radius-sm);
   transition: all var(--transition-fast);
-  background-color: rgba(67, 97, 238, 0.1);
+  background-color: rgba(var(--primary-color-rgb), 0.1); /* Daha soft */
   color: var(--primary-dark);
   font-weight: var(--font-weight-medium);
 }
 
 .variableHighlight:hover {
-  background-color: rgba(67, 97, 238, 0.2);
+  background-color: rgba(var(--primary-color-rgb), 0.2);
 }
 
 .emptyVariable {
-  background-color: rgba(248, 150, 30, 0.15);
+  background-color: rgba(var(--warning-color-rgb), 0.15); /* Eğer gerekirse rgba cinsinden uyarı rengi */
   color: var(--warning-color);
 }
 
@@ -168,7 +188,7 @@ h1 {
 
 .errorInput {
   border-color: var(--danger-color) !important;
-  background-color: rgba(247, 37, 133, 0.05) !important;
+  background-color: rgba(var(--danger-color-rgb), 0.05) !important; /* Eğer gerekirse rgba cinsinden tehlike rengi */
 }
 
 .errorTooltip {
@@ -188,22 +208,25 @@ h1 {
 /* Divider Styles */
 .paragraphDivider {
   position: relative;
-  height: var(--space-md);
-  margin: var(--space-xs) 0;
-  transition: all var(--transition-normal);
+  height: 6px; /* Daha küçük yükseklik */
+  margin: 2px 0;
+  transition: height var(--transition-fast);
+  z-index: 5;
+  background-color: var(--gray-200); /* Belirginleştirildi */
 }
 
 .dividerHover {
-  height: var(--space-lg);
+  height: 20px; /* Hover durumunda yüksekliği minimize ettik */
+  background-color: var(--gray-300); /* Hoverda daha belirgin */
 }
 
 .dividerAddButton {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
-  width: 28px;
-  height: 28px;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 20px; /* Daha küçük buton */
+  height: 20px; /* Daha küçük buton */
   border-radius: 50%;
   background-color: white;
   border: 1px solid var(--primary-color);
@@ -211,53 +234,91 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 14px;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  opacity: 0.9;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
 }
 
 .dividerAddButton:hover {
   background-color: var(--primary-color);
   color: white;
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.dividerAddButton:active {
+  transform: translate(-50%, -50%) scale(0.85);
 }
 
 /* Button Styles */
 .exportButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  margin: var(--space-xl) auto 0;
+  display: block; /* Block level element for center alignment */
+  margin: var(--space-xl) auto 0; /* Auto horizontal margins for centering */
   padding: var(--space-md) var(--space-lg);
-  background-color: var(--primary-color);
+  background-color: var(--primary-color); /* Birincil renk */
   color: white;
   border: none;
   border-radius: var(--border-radius-md);
   cursor: pointer;
   font-weight: var(--font-weight-medium);
   transition: all var(--transition-fast);
+  min-width: 180px;
+  text-align: center;
 }
 
 .exportButton:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-dark); /* Daha koyu birincil renk */
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+.exportButton:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .exportButton[data-has-errors="true"] {
   background-color: var(--danger-color);
 }
 
+.saveButton, .cancelButton {
+  padding: var(--space-xs) var(--space-md);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+}
+
 .saveButton {
-  background-color: var(--success-color);
+  background-color: var(--success-color); /* Daha soft yeşil */
   color: white;
 }
 
+.saveButton:hover {
+  background-color: #5cb85c; /* Daha koyu hover */
+  transform: translateY(-1px);
+}
+
+.saveButton:active {
+  transform: translateY(0);
+}
+
 .cancelButton {
-  background-color: var(--gray-500);
+  background-color: var(--gray-500); /* Nötr gri */
   color: white;
+}
+
+.cancelButton:hover {
+  background-color: var(--gray-600); /* Daha koyu hover */
+  transform: translateY(-1px);
+}
+
+.cancelButton:active {
+  transform: translateY(0);
 }
 
 .deleteButton {
@@ -266,13 +327,14 @@ h1 {
   right: var(--space-sm);
   background: none;
   border: none;
-  color: var(--danger-color);
+  color: var(--danger-color); /* Daha soft kırmızı */
+  opacity: 0.6;
   cursor: pointer;
-  font-size: 1rem;
-  padding: var(--space-xs);
+  font-size: 16px;
+  padding: 2px;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -280,29 +342,49 @@ h1 {
 }
 
 .deleteButton:hover {
-  background-color: rgba(247, 37, 133, 0.1);
+  background-color: rgba(var(--danger-color-rgb), 0.1); /* Hoverda daha belirgin */
+  opacity: 1;
 }
 
-/* Responsive Styles */
+/* Loading and Error States (Aynı kaldı veya index.css'den alıyor) */
+.loading, .error {
+  padding: var(--space-xl);
+  text-align: center;
+  border-radius: var(--border-radius-md);
+  margin: var(--space-xl) 0;
+}
+
+.loading {
+  background-color: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.error {
+  background-color: rgba(var(--danger-color-rgb), 0.05);
+  color: var(--danger-color);
+  border: 1px solid rgba(var(--danger-color-rgb), 0.2);
+}
+
+/* Responsive Styles (Aynı kaldı) */
 @media (max-width: 768px) {
   .container {
     padding: var(--space-md);
   }
-  
+
   .contentPanel {
     padding: var(--space-md);
   }
-  
+
   .editorControls {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-md);
   }
-  
+
   .modeSwitch {
     width: 100%;
   }
-  
+
   .paragraphEdit textarea {
     min-height: 150px;
   }
