@@ -1,3 +1,4 @@
+// client\src\components\ContractEditor.jsx
 /**
  * Revize Özeti:
  * - Paragraf aralarında hover olduğunda görünen ekle butonu eklendi
@@ -284,45 +285,56 @@ export default function ContractEditor() {
                                     </div>
                                 ) : (
                                     <p
-                                        className={`${styles.editableParagraph} ${editingMode === 'content' ? styles.contentEditMode : ''}`}
-                                        onDoubleClick={() => editingMode === 'content' && startEditParagraph(i)}
-                                    >
-                                        {paragraph.split(/({{.*?}})/g).map((part, j) => {
-                                            const variableMatch = part.match(/{{(.*?)}}/);
-                                            if (variableMatch) {
-                                                const varKey = variableMatch[1];
-                                                const isEditing = editingVar === varKey;
-                                                const isEmpty = !variables[varKey]?.trim();
+  className={`${styles.editableParagraph} ${editingMode === 'content' ? styles.contentEditMode : ''}`}
+  onDoubleClick={() => editingMode === 'content' && startEditParagraph(i)}
+  onClick={(e) => {
+    // Check if click was on the pencil icon
+    if (e.target === e.currentTarget || e.target === e.currentTarget.querySelector(':after')) {
+      editingMode === 'content' && startEditParagraph(i);
+    }
+  }}
+>
+  {paragraph.split(/({{.*?}})/g).map((part, j) => {
+    const variableMatch = part.match(/{{(.*?)}}/);
+    if (variableMatch) {
+      const varKey = variableMatch[1];
+      const isEditing = editingVar === varKey;
+      const isEmpty = !variables[varKey]?.trim();
 
-                                                return isEditing ? (
-                                                    <span key={j} className={styles.variableInputEdit}>
-                                                        <input
-                                                            ref={inputRef}
-                                                            type="text"
-                                                            value={tempValue}
-                                                            onChange={(e) => setTempValue(e.target.value)}
-                                                            onKeyDown={handleKeyDown}
-                                                            className={validationErrors[varKey] ? styles.errorInput : ''}
-                                                            placeholder={`${varKey.replace(/_/g, ' ')} girin`}
-                                                        />
-                                                        {validationErrors[varKey] && (
-                                                            <span className={styles.errorTooltip}>Bu alan zorunludur</span>
-                                                        )}
-                                                    </span>
-                                                ) : (
-                                                    <span
-                                                        key={j}
-                                                        className={`${styles.variableHighlight} ${isEmpty ? styles.emptyVariable : ''}`}
-                                                        onDoubleClick={() => editingMode === 'variables' && startEditVariable(varKey, variables[varKey] || '')}
-                                                        onTouchStart={() => editingMode === 'variables' && handleLongPressStart(varKey, variables[varKey] || '')}
-                                                    >
-                                                        {variables[varKey] || `[${varKey}]`}
-                                                    </span>
-                                                );
-                                            }
-                                            return part;
-                                        })}
-                                    </p>
+      return isEditing ? (
+        <span key={j} className={styles.variableInputEdit}>
+          <input
+            ref={inputRef}
+            type="text"
+            value={tempValue}
+            onChange={(e) => setTempValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className={validationErrors[varKey] ? styles.errorInput : ''}
+            placeholder={`${varKey.replace(/_/g, ' ')} girin`}
+          />
+          {validationErrors[varKey] && (
+            <span className={styles.errorTooltip}>Bu alan zorunludur</span>
+          )}
+        </span>
+      ) : (
+        <span
+          key={j}
+          className={`${styles.variableHighlight} ${isEmpty ? styles.emptyVariable : ''}`}
+          onClick={(e) => {
+            if (e.target.classList.contains(styles.variableHighlight) || 
+                e.target.tagName === 'SPAN' && e.target.textContent === '✏️') {
+              editingMode === 'variables' && startEditVariable(varKey, variables[varKey] || '');
+            }
+          }}
+          onTouchStart={() => editingMode === 'variables' && handleLongPressStart(varKey, variables[varKey] || '')}
+        >
+          {variables[varKey] || `[${varKey}]`}
+        </span>
+      );
+    }
+    return part;
+  })}
+</p>
                                 )}
                                 {editingMode === 'content' && activeParagraphIndex === i && currentEditIndex !== i && newParagraphIndex !== i && (
                                     <button onClick={() => deleteParagraph(i)} className={styles.deleteButton}>-</button>
