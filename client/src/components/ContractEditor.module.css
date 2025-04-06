@@ -1,115 +1,200 @@
 /* client/src/components/ContractEditor.module.css */
-/* ... önceki stiller ... */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
 
+.contentPanel {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+h1 {
+  color: var(--gray-900);
+  margin-bottom: var(--space-sm);
+}
+
+.category {
+  display: inline-block;
+  color: var(--gray-600);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-xs);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.editorControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.modeSwitch {
+  display: flex;
+  gap: var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  background: var(--gray-100);
+  padding: var(--space-xs);
+}
+
+.modeSwitch button {
+  border: none;
+  background: transparent;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-600);
+  transition: all var(--transition-fast);
+}
+
+.modeSwitch button:hover {
+  color: var(--gray-800);
+}
+
+.modeSwitch button.activeMode {
+  background: white;
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.preview {
+  margin-top: var(--space-lg);
+  min-height: 400px;
+}
+
+/* Paragraph Styles */
 .paragraphContainer {
   position: relative;
-  margin: 0; /* Bloklar arası boşluk ayraçlar tarafından sağlanacak */
-  padding: 10px;
-  border: 1px solid #ced4da; /* Blok kenarlığı */
-  border-radius: 4px;
-  background-color: white; /* Paragraf arka planı */
+  margin-bottom: var(--space-xs);
+  padding: var(--space-md);
+  border-radius: var(--border-radius-md);
+  background-color: white;
+  border: 1px solid var(--gray-200);
+  transition: all var(--transition-fast);
 }
 
 .activeParagraph {
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
 }
 
 .editableParagraph {
   cursor: text;
-  padding: 8px;
-  border-radius: 4px;
-  transition: all 0.2s;
-  margin: 0; /* P etiketi varsayılan marjinlerini kaldır */
-  white-space: pre-wrap; /* Satır sonlarını koru */
+  padding: var(--space-xs);
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  transition: background-color var(--transition-fast);
 }
 
 .editableParagraph:hover {
-  background-color: #f1f3f5;
-}
-
-.paragraphActions {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  display: flex;
-  gap: 5px;
+  background-color: var(--gray-100);
 }
 
 .paragraphEdit {
-  margin-bottom: 10px;
-  border: 1px solid #dee2e6;
-  padding: 12px;
-  border-radius: 4px;
-  background-color: #f8f9fa;
+  margin-bottom: var(--space-md);
+  border: 1px solid var(--gray-300);
+  padding: var(--space-md);
+  border-radius: var(--border-radius-md);
+  background-color: var(--gray-50);
 }
 
 .paragraphEdit textarea {
   width: 100%;
-  min-height: 80px;
-  padding: 8px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  min-height: 100px;
+  padding: var(--space-sm);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--border-radius-sm);
   font-family: inherit;
   font-size: inherit;
   resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+
+.paragraphEdit textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
 }
 
 .editButtons {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
   justify-content: flex-end;
 }
 
-.saveButton {
-  background-color: #28a745;
-  color: white;
-}
-
-.saveButton:hover {
-  background-color: #1e7e34;
-}
-
-.cancelButton {
-  background-color: #6c757d;
-  color: white;
-}
-
-.cancelButton:hover {
-  background-color: #5a6268;
-}
-
-.deleteButton {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: none;
-  border: none;
-  color: #dc3545;
+/* Variable Styles */
+.variableHighlight {
   cursor: pointer;
-  font-size: 14px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  opacity: 0.7;
-  transition: opacity 0.2s, background-color 0.2s;
+  padding: 0 var(--space-xs);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  background-color: rgba(67, 97, 238, 0.1);
+  color: var(--primary-dark);
+  font-weight: var(--font-weight-medium);
 }
 
-.deleteButton:hover {
-  opacity: 1;
-  background-color: #f8d7da;
+.variableHighlight:hover {
+  background-color: rgba(67, 97, 238, 0.2);
 }
 
-/* Paragraflar arası ayraç stili */
+.emptyVariable {
+  background-color: rgba(248, 150, 30, 0.15);
+  color: var(--warning-color);
+}
+
+.variableInputEdit {
+  display: inline-block;
+  position: relative;
+  margin: 0 var(--space-xs);
+}
+
+.variableInputEdit input {
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--border-radius-sm);
+  background-color: white;
+  box-shadow: var(--shadow-sm);
+  min-width: 120px;
+  font: inherit;
+}
+
+.errorInput {
+  border-color: var(--danger-color) !important;
+  background-color: rgba(247, 37, 133, 0.05) !important;
+}
+
+.errorTooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background-color: var(--danger-color);
+  color: white;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  z-index: 10;
+  margin-bottom: var(--space-xs);
+}
+
+/* Divider Styles */
 .paragraphDivider {
   position: relative;
-  height: 8px; /* Sabit yükseklik, hover olmadığında da boşluk olsun */
-  margin: 4px 0; /* Üst ve alt kenardan biraz boşluk */
-  transition: all 0.2s ease;
-  z-index: 1; /* Üstte olsun */
+  height: var(--space-md);
+  margin: var(--space-xs) 0;
+  transition: all var(--transition-normal);
 }
 
 .dividerHover {
-  height: 20px; /* Hover olunca daha fazla alan */
+  height: var(--space-lg);
 }
 
 .dividerAddButton {
@@ -117,188 +202,108 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background-color: #ffffff;
-  border: 1px solid #28a745;
-  color: #28a745;
+  background-color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  line-height: 1;
-  padding: 0;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: all 0.2s ease;
-  z-index: 2;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
 }
 
 .dividerAddButton:hover {
-  background-color: #28a745;
+  background-color: var(--primary-color);
   color: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
-/* DİĞER STİLLER */
-.variableHighlight {
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: all 0.2s;
-}
-
-.variableHighlight:hover {
-  background-color: #e9ecef;
-}
-
-.emptyVariable {
-  background-color: #fff3bf;
-}
-
-.variableInputEdit {
-  display: inline-block;
-  position: relative;
-  margin: -2px 0;
-}
-
-.variableInputEdit input {
-  padding: 4px 8px;
-  border: 2px solid #3a86ff;
-  border-radius: 4px;
-  background-color: #e2f0fd;
-  box-shadow: 0 0 8px rgba(58, 134, 255, 0.5);
-  min-width: 120px;
-  font: inherit;
-}
-
-.errorInput {
-  border-color: #dc3545 !important;
-  background-color: #f8d7da !important;
-}
-
-.errorTooltip {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  background-color: #dc3545;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  z-index: 10;
-}
-
+/* Button Styles */
 .exportButton {
-  display: block;
-  margin: 25px auto 0;
-  padding: 8px 16px;
-  background-color: #3a86ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin: var(--space-xl) auto 0;
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
-  font-size: 14px;
-  width: 160px;
-  transition: background-color 0.2s;
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
 }
 
 .exportButton:hover {
-  background-color: #2869c9;
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
-.addParagraphBottom {
-  text-align: center;
-  margin-top: 15px;
+.exportButton[data-has-errors="true"] {
+  background-color: var(--danger-color);
 }
 
-.addParagraphBottom button {
-  padding: 8px 16px;
-  background-color: #28a745;
+.saveButton {
+  background-color: var(--success-color);
   color: white;
+}
+
+.cancelButton {
+  background-color: var(--gray-500);
+  color: white;
+}
+
+.deleteButton {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: none;
   border: none;
-  border-radius: 4px;
+  color: var(--danger-color);
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.addParagraphBottom button:hover {
-  background-color: #1e7e34;
-}
-
-.addParagraphBelow {
-  text-align: center;
-  margin-bottom: 5px; /* Bloklar arası boşluk */
-}
-
-.addParagraphBelow button {
-  color: #28a745;
-  border-color: #28a745;
-  font-size: 16px; /* Biraz daha belirgin olabilir */
-  line-height: 1;
-  padding: 0;
-  width: 24px;
-  height: 24px;
+  font-size: 1rem;
+  padding: var(--space-xs);
   border-radius: 50%;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  margin: 5px auto; /* Bloklar arası boşluk ve ortalama */
+  transition: all var(--transition-fast);
 }
 
-.addParagraphBelow button:hover {
-  background-color: #e9ecef;
+.deleteButton:hover {
+  background-color: rgba(247, 37, 133, 0.1);
 }
 
-/* MOBİL UYUMLULUK */
+/* Responsive Styles */
 @media (max-width: 768px) {
+  .container {
+    padding: var(--space-md);
+  }
+  
   .contentPanel {
-      padding: 15px;
+    padding: var(--space-md);
   }
-
+  
   .editorControls {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
   }
-
+  
   .modeSwitch {
-      width: 100%;
+    width: 100%;
   }
-
-  .contentActions {
-      width: 100%;
-      justify-content: flex-start;
-  }
-
-  .paragraphActions {
-      top: 2px;
-      right: 2px;
-  }
-
-  .paragraphActions button {
-      font-size: 12px;
-      padding: 2px 4px;
-  }
-
-  .dividerAddButton {
-      width: 20px;
-      height: 20px;
-      font-size: 14px;
-  }
-
-  .paragraphDivider {
-      height: 6px;
-      margin: 2px 0;
-  }
-
-  .dividerHover {
-      height: 16px;
+  
+  .paragraphEdit textarea {
+    min-height: 150px;
   }
 }
