@@ -82,16 +82,18 @@ h1 {
 .paragraphContainer {
   position: relative;
   margin-bottom: var(--space-xs);
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-xl) var(--space-md) var(--space-md); /* Right padding for delete button */
   border-radius: var(--border-radius-md);
   background-color: white;
   border: 1px solid var(--gray-200);
   transition: all var(--transition-fast);
 }
 
+/* Enhanced Active Paragraph Styles */
 .activeParagraph {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 1px var(--primary-color);
+  background-color: rgba(var(--primary-color-rgb), 0.03);
 }
 
 /* Updated Editable Paragraph Styles */
@@ -408,28 +410,73 @@ h1 {
 
 .deleteButton {
   position: absolute;
-  top: var(--space-sm);
+  top: 50%;
   right: var(--space-sm);
+  transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--danger-color);
-  opacity: 0.6;
   cursor: pointer;
   font-size: 16px;
-  padding: 2px;
-  border-radius: 50%;
   width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
+  opacity: 0.3;
+  border-radius: 50%;
+  background-color: rgba(var(--danger-color-rgb), 0.05);
+}
+
+/* Show delete button in content mode */
+.editingMode-content .paragraphContainer:hover .deleteButton,
+.editingMode-content .paragraphContainer:focus-within .deleteButton,
+.editingMode-content .activeParagraph .deleteButton {
+  opacity: 1;
+  background-color: rgba(var(--danger-color-rgb), 0.1);
+}
+
+/* Updated Editable Paragraph Styles */
+.editingMode-content .editableParagraph {
+  padding-right: 40px; /* Space for delete indicator */
+}
+
+/* Animation for delete action */
+@keyframes fadeOut {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9); }
+}
+
+.deleting {
+  animation: fadeOut 0.3s ease-out forwards;
 }
 
 .deleteButton:hover {
-  background-color: rgba(var(--danger-color-rgb), 0.1);
-  opacity: 1;
-  transform: scale(1.1);
+  background-color: rgba(var(--danger-color-rgb), 0.2) !important;
+  opacity: 1 !important;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.deleteButton:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+/* New Persistent Delete Indicator */
+.editingMode-content .paragraphContainer:after {
+  content: "🗑️";
+  position: absolute;
+  right: var(--space-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.2;
+  font-size: 0.9em;
+  transition: all var(--transition-fast);
+  pointer-events: none;
+}
+
+.editingMode-content .paragraphContainer:hover:after {
+  opacity: 0;
 }
 
 /* Loading and Error States */
