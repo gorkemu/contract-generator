@@ -1,143 +1,6 @@
 /* client/src/components/ContractEditor.module.css */
+/* ... önceki stiller ... */
 
-.container {
-  display: flex;
-  min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  justify-content: center;
-  padding: 20px 0;
-  background-color: #f8f9fa;
-}
-
-.contentPanel {
-  width: 100%;
-  max-width: 900px;
-  padding: 20px;
-  overflow-y: auto;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.contentPanel h1 {
-  margin-bottom: 8px;
-  color: #212529;
-  text-align: center;
-  font-size: 1.8rem;
-}
-
-.category {
-  color: #6c757d;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 1rem;
-}
-
-/* BUTON GRUBU - ÖNİZLEME ÜSTÜNDE */
-.editorControls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 15px;
-  align-items: center;
-}
-
-.modeSwitch {
-  display: flex;
-  background-color: white;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.modeSwitch button {
-  padding: 6px 12px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 13px;
-  color: #495057;
-  transition: all 0.2s;
-}
-
-.modeSwitch button.activeMode {
-  background: #3a86ff;
-  color: white;
-}
-
-.contentActions {
-  display: flex;
-  gap: 8px;
-}
-
-.contentActions button {
-  padding: 6px 10px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.contentActions button:hover {
-  background: #f1f3f5;
-}
-
-.addButton {
-  color: #28a745;
-  border-color: #28a745;
-  font-size: 16px; /* Biraz daha belirgin olabilir */
-  line-height: 1;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  margin: 5px auto; /* Bloklar arası boşluk ve ortalama */
-}
-
-.addButton:hover {
-  background-color: #e9ecef;
-}
-
-.deleteButton {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: none;
-  border: none;
-  color: #dc3545;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  opacity: 0.7;
-  transition: opacity 0.2s, background-color 0.2s;
-}
-
-.deleteButton:hover {
-  opacity: 1;
-  background-color: #f8d7da;
-}
-
-/* ÖNİZLEME ALANI */
-.preview {
-  line-height: 1.7;
-  white-space: pre-wrap;
-  padding: 15px;
-  background-color: #f8f9fa; /* Açık gri arka plan */
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  margin-top: 0;
-}
-
-/* PARAGRAF BLOKLARI */
 .paragraphContainer {
   position: relative;
   margin-bottom: 5px; /* Bloklar arası boşluk azaltıldı */
@@ -145,6 +8,10 @@
   border: 1px solid #ced4da; /* Blok kenarlığı */
   border-radius: 4px;
   background-color: white; /* Paragraf arka planı */
+}
+
+.activeParagraph {
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .editableParagraph {
@@ -194,15 +61,6 @@
   justify-content: flex-end;
 }
 
-.editButtons button {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: background-color 0.2s;
-}
-
 .saveButton {
   background-color: #28a745;
   color: white;
@@ -219,6 +77,26 @@
 
 .cancelButton:hover {
   background-color: #5a6268;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  opacity: 0.7;
+  transition: opacity 0.2s, background-color 0.2s;
+}
+
+.deleteButton:hover {
+  opacity: 1;
+  background-color: #f8d7da;
 }
 
 /* DİĞER STİLLER */
@@ -314,6 +192,28 @@
   margin-bottom: 5px; /* Bloklar arası boşluk */
 }
 
+.addParagraphBelow button {
+  color: #28a745;
+  border-color: #28a745;
+  font-size: 16px; /* Biraz daha belirgin olabilir */
+  line-height: 1;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  margin: 5px auto; /* Bloklar arası boşluk ve ortalama */
+}
+
+.addParagraphBelow button:hover {
+  background-color: #e9ecef;
+}
+
 /* MOBİL UYUMLULUK */
 @media (max-width: 768px) {
   .contentPanel {
@@ -349,5 +249,9 @@
       font-size: 14px;
       width: 20px;
       height: 20px;
+  }
+
+  .addParagraphBelow button {
+      margin: 2px auto; /* Mobil için daha az marjin */
   }
 }

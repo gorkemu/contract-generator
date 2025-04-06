@@ -1,9 +1,8 @@
 // client/src/components/ContractEditor.jsx
 /**
  * Revize Özeti:
- * - Değişken ve içerik düzenleme alanlarındaki onBlur olayları kaldırıldı.
- * - Düzenleme modundan çıkış artık sadece Kaydet veya İptal butonları ile ya da değişken düzenleme için Enter/Escape tuşları ile sağlanıyor.
- * - handleOutsideClick fonksiyonu sadece değişken düzenleme inputunun dışına tıklanıldığında çalışacak şekilde düzenlendi.
+ * - Yeni paragraf ekleme UI'ının doğru konumda (altında) görünmesi için mantık ve renderlama düzenlendi.
+ * - newParagraphIndex'in kullanımı ve ilgili koşullu renderlama güncellendi.
  */
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -23,10 +22,12 @@ export default function ContractEditor() {
     const [editableContent, setEditableContent] = useState([]);
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [newParagraphIndex, setNewParagraphIndex] = useState(null);
+    const [activeParagraphIndex, setActiveParagraphIndex] = useState(null); // Aktif olarak seçilen paragrafın indeksi
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const inputRef = useRef(null);
     const editModeRef = useRef(false);
+    const editorRef = useRef(null);
 
     useEffect(() => {
         const fetchTemplate = async () => {
@@ -140,6 +141,11 @@ export default function ContractEditor() {
         } else if (currentEditIndex > index) {
             setCurrentEditIndex(currentEditIndex - 1);
         }
+        if (activeParagraphIndex === index) {
+            setActiveParagraphIndex(null);
+        } else if (activeParagraphIndex > index) {
+            setActiveParagraphIndex(activeParagraphIndex - 1);
+        }
     };
 
     const handleLongPressStart = (key, value) => {
@@ -180,6 +186,9 @@ export default function ContractEditor() {
         if (currentEditIndex !== null && !e.target.closest(`.${styles.paragraphEdit}`)) {
             setCurrentEditIndex(null);
         }
+        if (activeParagraphIndex !== null && !e.target.closest(`.${styles.paragraphContainer}`)) {
+            setActiveParagraphIndex(null);
+        }
     };
 
     if (loading) return <div className={styles.loading}>Yükleniyor...</div>;
@@ -187,7 +196,7 @@ export default function ContractEditor() {
     if (!template) return <div className={styles.error}>Şablon bulunamadı</div>;
 
     return (
-        <div className={styles.container} onClick={handleOutsideClick}>
+        <div className={styles.container} onClick={handleOutsideClick} ref={editorRef}>
             <div className={styles.contentPanel}>
                 <h1>{template.title}</h1>
                 <p className={styles.category}>{template.category}</p>
@@ -212,21 +221,10 @@ export default function ContractEditor() {
                 <div className={styles.preview}>
                     {editableContent.map((paragraph, i) => (
                         <React.Fragment key={i}>
-                            <div className={styles.paragraphContainer}>
-                                {editingMode === 'content' && newParagraphIndex === i && (
-                                    <div className={styles.paragraphEdit}>
-                                        <textarea
-                                            value={tempValue}
-                                            onChange={(e) => setTempValue(e.target.value)}
-                                            autoFocus
-                                            placeholder="Yeni madde içeriği..."
-                                        />
-                                        <div className={styles.editButtons}>
-                                            <button onClick={() => insertNewParagraph(i)} className={styles.saveButton}>Kaydet</button>
-                                            <button onClick={() => setNewParagraphIndex(null)} className={styles.cancelButton}>İptal</button>
-                                        </div>
-                                    </div>
-                                )}
+                            <div
+                                className={`${styles.paragraphContainer} ${activeParagraphIndex === i ? styles.activeParagraph : ''}`}
+                                onClick={() => editingMode === 'content' && setActiveParagraphIndex(i)}
+                            >
                                 {editingMode === 'content' && currentEditIndex === i ? (
                                     <div className={styles.paragraphEdit}>
                                         <textarea
@@ -281,11 +279,25 @@ export default function ContractEditor() {
                                         })}
                                     </p>
                                 )}
-                                {editingMode === 'content' && editableContent.length > 1 && currentEditIndex !== i && newParagraphIndex !== i && (
+                                {editingMode === 'content' && activeParagraphIndex === i && currentEditIndex !== i && newParagraphIndex !== i && (
                                     <button onClick={() => deleteParagraph(i)} className={styles.deleteButton}>-</button>
                                 )}
                             </div>
-                            {editingMode === 'content' && currentEditIndex !== i && newParagraphIndex !== i && (
+                            {editingMode === 'content' && newParagraphIndex === i && (
+                                <div className={styles.paragraphEdit}>
+                                    <textarea
+                                        value={tempValue}
+                                        onChange={(e) => setTempValue(e.target.value)}
+                                        autoFocus
+                                        placeholder="Yeni madde içeriği..."
+                                    />
+                                    <div className={styles.editButtons}>
+                                        <button onClick={() => insertNewParagraph(i)} className={styles.saveButton}>Kaydet</button>
+                                        <button onClick={() => setNewParagraphIndex(null)} className={styles.cancelButton}>İptal</button>
+                                    </div>
+                                </div>
+                            )}
+                            {editingMode === 'content' && activeParagraphIndex === i && currentEditIndex !== i && newParagraphIndex !== i && (
                                 <div className={styles.addParagraphBelow}>
                                     <button onClick={() => addNewParagraph(i)} className={styles.addButton}>+</button>
                                 </div>
@@ -306,9 +318,9 @@ export default function ContractEditor() {
                             </div>
                         </div>
                     )}
-                    {editingMode === 'content' && editableContent.length > 0 && newParagraphIndex !== editableContent.length && (
-                        <div className={styles.addParagraphBelow}>
-                            <button onClick={() => addNewParagraph(editableContent.length)} className={styles.addButton}>+</button>
+                    {editingMode === 'content' && editableContent.length > 0 && activeParagraphIndex === null && newParagraphIndex !== editableContent.length && (
+                        <div className={styles.addParagraphBottom}>
+                            <button onClick={() => addNewParagraph(editableContent.length)} className={styles.addButton}>Yeni Madde Ekle</button>
                         </div>
                     )}
                 </div>
