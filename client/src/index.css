@@ -1,66 +1,99 @@
-/* client/src/index.css */
-:root {
-  /* Renk Paleti */
-  --primary-color: #4361ee;
-  --primary-dark: #3a56d4;
-  --secondary-color: #3f37c9;
-  --accent-color: #4895ef;
-  --danger-color: #f72585;
-  --success-color: #4cc9f0;
-  --warning-color: #f8961e;
-  
-  /* Gri Tonları */
-  --gray-100: #f8f9fa;
-  --gray-200: #e9ecef;
-  --gray-300: #dee2e6;
-  --gray-400: #ced4da;
-  --gray-500: #adb5bd;
-  --gray-600: #6c757d;
-  --gray-700: #495057;
-  --gray-800: #343a40;
-  --gray-900: #212529;
-  
-  /* Tipografi */
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --font-size-base: 1rem;
+/* client\src\index.css */
+/*
+ * Revize Özeti:
+ * - Daha ciddi ve gözü yormayan bir ana renk paleti tanımlandı.
+ * - Birincil renk (primary) daha soft bir mavi tonuna ayarlandı.
+ * - İkincil renk (secondary) daha nötr bir gri tonuna ayarlandı.
+ * - Vurgu rengi (accent) birincil rengin daha açık bir tonu olarak belirlendi.
+ * - Başarı, tehlike ve uyarı renkleri daha az canlı tonlara indirildi.
+ * - Gri tonları daha dengeli bir şekilde güncellendi.
+ */
+
+ :root {
+  /* Yenilenmiş Renk Paleti (Daha Ciddi ve Gözü Yormayan) */
+  --primary-color: #4c6ef5; /* Daha soft bir mavi */
+  --primary-light: #a3bded;
+  --primary-dark: #1c3d5a;
+  --secondary-color: #6c757d; /* Nötr gri */
+  --accent-color: #869cf8; /* Birincil rengin açık tonu */
+  --danger-color: #dc3545; /* Daha az canlı kırmızı */
+  --success-color: #28a745; /* Daha az canlı yeşil */
+  --warning-color: #ffc107; /* Daha az canlı sarı */
+
+  /* Geliştirilmiş Gri Tonları (Daha Dengeli) */
+  --gray-50: #f8f9fa;
+  --gray-100: #e9ecef;
+  --gray-200: #dee2e6;
+  --gray-300: #ced4da;
+  --gray-400: #adb5bd;
+  --gray-500: #6c757d;
+  --gray-600: #495057;
+  --gray-700: #343a40;
+  --gray-800: #212529;
+  --gray-900: #0b0d0f;
+
+  /* Tipografi (Aynı kaldı) */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+  --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
   --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --line-height: 1.5;
-  
-  /* Spacing */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-loose: 1.75;
+
+  /* Spacing (Aynı kaldı) */
+  --space-0: 0;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
-  
-  /* Border */
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
+  --space-2xl: 3rem;
+
+  /* Border (Aynı kaldı) */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.375rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 0.75rem;
+  --border-radius-full: 9999px;
   --border-width: 1px;
-  
-  /* Shadow */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  /* Transition */
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
+
+  /* Shadow (Aynı kaldı) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+  /* Transition (Aynı kaldı) */
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-bounce: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Inter fontunu ekle (Aynı kaldı) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
   margin: 0;
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
-  line-height: var(--line-height);
+  line-height: var(--line-height-normal);
   color: var(--gray-800);
-  background-color: var(--gray-100);
+  background-color: var(--gray-50);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -69,44 +102,72 @@ body {
   box-sizing: border-box;
 }
 
+/* Tipografi Hiyerarşisi (Aynı kaldı) */
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
   margin-bottom: var(--space-md);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--gray-900);
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.75rem; }
-h4 { font-size: 1.5rem; }
-h5 { font-size: 1.25rem; }
-h6 { font-size: 1rem; }
+h1 {
+  font-size: var(--font-size-4xl);
+  letter-spacing: -0.025em;
+}
+h2 {
+  font-size: var(--font-size-3xl);
+  letter-spacing: -0.02em;
+}
+h3 {
+  font-size: var(--font-size-2xl);
+  letter-spacing: -0.015em;
+}
+h4 {
+  font-size: var(--font-size-xl);
+}
+h5 {
+  font-size: var(--font-size-lg);
+}
+h6 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
+/* Link Stilleri (Birincil renge göre güncellendi) */
 a {
   color: var(--primary-color);
   text-decoration: none;
   transition: color var(--transition-fast);
+  font-weight: var(--font-weight-medium);
 }
 
 a:hover {
   color: var(--primary-dark);
   text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
 
+/* Buton Temel Stilleri (Aynı kaldı) */
 button {
   font-family: inherit;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-bounce);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  outline: none;
 }
 
-/* Responsive breakpoints */
+/* Responsive breakpoints (Aynı kaldı) */
 @media (max-width: 768px) {
   :root {
     --font-size-base: 0.9375rem;
   }
-  
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.75rem; }
-  h3 { font-size: 1.5rem; }
+
+  h1 { font-size: var(--font-size-3xl); }
+  h2 { font-size: var(--font-size-2xl); }
+  h3 { font-size: var(--font-size-xl); }
 }
