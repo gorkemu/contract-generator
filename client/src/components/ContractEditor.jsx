@@ -1,11 +1,3 @@
-// client\src\components\ContractEditor.jsx
-/**
- * Revize Özeti:
- * - Paragraf aralarında hover olduğunda görünen ekle butonu eklendi
- * - Paragraf konteynerlerine hover durumu için state ve event handler'lar eklendi
- * - Butonların sayfa düzenini bozmaması için CSS sınıfları ve pozisyonlama güncellendi
- * - Paragraf bloklarının arasındaki boşluk daha tutarlı hale getirildi
- */
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './ContractEditor.module.css';
@@ -25,7 +17,7 @@ export default function ContractEditor() {
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [newParagraphIndex, setNewParagraphIndex] = useState(null);
     const [activeParagraphIndex, setActiveParagraphIndex] = useState(null);
-    const [hoverDividers, setHoverDividers] = useState([]); // Hover durumundaki ayraçlar için state
+    const [hoverDividers, setHoverDividers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const inputRef = useRef(null);
@@ -43,7 +35,6 @@ export default function ContractEditor() {
                     setTemplate(foundTemplate);
                     setVariables(foundTemplate.variables || {});
                     setEditableContent(foundTemplate.content.split('\n'));
-                    // Divider hover array'ini içerik uzunluğuna göre başlat
                     setHoverDividers(new Array(foundTemplate.content.split('\n').length + 1).fill(false));
                 } else {
                     navigate('/');
@@ -135,7 +126,6 @@ export default function ContractEditor() {
         updatedContent.splice(index + 1, 0, tempValue);
         setEditableContent(updatedContent);
         setNewParagraphIndex(null);
-        // Divider sayısını güncelle
         setHoverDividers(prev => [...prev, false]);
     };
 
@@ -153,7 +143,6 @@ export default function ContractEditor() {
         } else if (activeParagraphIndex > index) {
             setActiveParagraphIndex(activeParagraphIndex - 1);
         }
-        // Divider sayısını güncelle
         setHoverDividers(prev => {
             const updated = [...prev];
             updated.pop();
@@ -204,7 +193,6 @@ export default function ContractEditor() {
         }
     };
 
-    // Divider'ın hover durumunu yönetmek için fonksiyonlar
     const handleDividerMouseEnter = (index) => {
         if (editingMode === 'content') {
             const newHoverState = [...hoverDividers];
@@ -247,7 +235,6 @@ export default function ContractEditor() {
                 </div>
 
                 <div className={styles.preview}>
-                    {/* İlk paragraf öncesi ayraç */}
                     {editingMode === 'content' && editableContent.length > 0 && (
                         <div 
                             className={`${styles.paragraphDivider} ${hoverDividers[0] ? styles.dividerHover : ''}`}
@@ -268,10 +255,14 @@ export default function ContractEditor() {
                     {editableContent.map((paragraph, i) => (
                         <React.Fragment key={i}>
                             <div
-  className={`${styles.paragraphContainer} ${activeParagraphIndex === i ? styles.activeParagraph : ''} ${styles[`editingMode-${editingMode}`]}`}
-  onClick={() => editingMode === 'content' && setActiveParagraphIndex(i)}
->
-  {editingMode === 'content' && currentEditIndex === i ? (
+                                className={`${styles.paragraphContainer} ${
+                                    activeParagraphIndex === i ? styles.activeParagraph : ''
+                                } ${
+                                    editingMode === 'content' ? `${styles['editingMode-content']} ${styles['delete-indicator']}` : ''
+                                }`}
+                                onClick={() => editingMode === 'content' && setActiveParagraphIndex(i)}
+                            >
+                                {editingMode === 'content' && currentEditIndex === i ? (
                                     <div className={styles.paragraphEdit}>
                                         <textarea
                                             value={tempValue}
@@ -285,73 +276,72 @@ export default function ContractEditor() {
                                     </div>
                                 ) : (
                                     <p
-      className={`${styles.editableParagraph} ${editingMode === 'content' ? styles.contentEditMode : ''}`}
-      onDoubleClick={() => editingMode === 'content' && startEditParagraph(i)}
-      onClick={(e) => {
-        if (e.target === e.currentTarget || e.target === e.currentTarget.querySelector(':after')) {
-          editingMode === 'content' && startEditParagraph(i);
-        }
-      }}
-    >
-  {paragraph.split(/({{.*?}})/g).map((part, j) => {
-    const variableMatch = part.match(/{{(.*?)}}/);
-    if (variableMatch) {
-      const varKey = variableMatch[1];
-      const isEditing = editingVar === varKey;
-      const isEmpty = !variables[varKey]?.trim();
+                                        className={`${styles.editableParagraph} ${editingMode === 'content' ? styles.contentEditMode : ''}`}
+                                        onDoubleClick={() => editingMode === 'content' && startEditParagraph(i)}
+                                        onClick={(e) => {
+                                            if (e.target === e.currentTarget || e.target === e.currentTarget.querySelector(':after')) {
+                                                editingMode === 'content' && startEditParagraph(i);
+                                            }
+                                        }}
+                                    >
+                                        {paragraph.split(/({{.*?}})/g).map((part, j) => {
+                                            const variableMatch = part.match(/{{(.*?)}}/);
+                                            if (variableMatch) {
+                                                const varKey = variableMatch[1];
+                                                const isEditing = editingVar === varKey;
+                                                const isEmpty = !variables[varKey]?.trim();
 
-      return isEditing ? (
-        <span key={j} className={styles.variableInputEdit}>
-          <input
-            ref={inputRef}
-            type="text"
-            value={tempValue}
-            onChange={(e) => setTempValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className={validationErrors[varKey] ? styles.errorInput : ''}
-            placeholder={`${varKey.replace(/_/g, ' ')} girin`}
-          />
-          {validationErrors[varKey] && (
-            <span className={styles.errorTooltip}>Bu alan zorunludur</span>
-          )}
-        </span>
-      ) : (
-        <span
-          key={j}
-          className={`${styles.variableHighlight} ${isEmpty ? styles.emptyVariable : ''}`}
-          onClick={(e) => {
-            if (e.target.classList.contains(styles.variableHighlight) || 
-                e.target.tagName === 'SPAN' && e.target.textContent === '✏️') {
-              editingMode === 'variables' && startEditVariable(varKey, variables[varKey] || '');
-            }
-          }}
-          onTouchStart={() => editingMode === 'variables' && handleLongPressStart(varKey, variables[varKey] || '')}
-        >
-          {variables[varKey] || `[${varKey}]`}
-        </span>
-      );
-    }
-    return part;
-  })}
-</p>
+                                                return isEditing ? (
+                                                    <span key={j} className={styles.variableInputEdit}>
+                                                        <input
+                                                            ref={inputRef}
+                                                            type="text"
+                                                            value={tempValue}
+                                                            onChange={(e) => setTempValue(e.target.value)}
+                                                            onKeyDown={handleKeyDown}
+                                                            className={validationErrors[varKey] ? styles.errorInput : ''}
+                                                            placeholder={`${varKey.replace(/_/g, ' ')} girin`}
+                                                        />
+                                                        {validationErrors[varKey] && (
+                                                            <span className={styles.errorTooltip}>Bu alan zorunludur</span>
+                                                        )}
+                                                    </span>
+                                                ) : (
+                                                    <span
+                                                        key={j}
+                                                        className={`${styles.variableHighlight} ${isEmpty ? styles.emptyVariable : ''}`}
+                                                        onClick={(e) => {
+                                                            if (e.target.classList.contains(styles.variableHighlight)) {
+                                                                editingMode === 'variables' && startEditVariable(varKey, variables[varKey] || '');
+                                                            }
+                                                        }}
+                                                        onTouchStart={() => editingMode === 'variables' && handleLongPressStart(varKey, variables[varKey] || '')}
+                                                    >
+                                                        {variables[varKey] || `[${varKey}]`}
+                                                    </span>
+                                                );
+                                            }
+                                            return part;
+                                        })}
+                                    </p>
                                 )}
+                                
                                 {editingMode === 'content' && (
-    <button 
-      onClick={(e) => {
-        e.stopPropagation();
-        const container = e.currentTarget.closest(`.${styles.paragraphContainer}`);
-        container.classList.add(styles.deleting);
-        setTimeout(() => deleteParagraph(i), 300);
-      }} 
-      className={styles.deleteButton}
-      aria-label="Delete paragraph"
-    >
-      -
-    </button>
-  )}
-</div>
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const container = e.currentTarget.closest(`.${styles.paragraphContainer}`);
+                                            container.classList.add(styles.deleting);
+                                            setTimeout(() => deleteParagraph(i), 300);
+                                        }} 
+                                        className={styles.deleteButton}
+                                        aria-label="Delete paragraph"
+                                    >
+                                        -
+                                    </button>
+                                )}
+                            </div>
 
-                            {/* Paragraflar arası ayraç */}
                             {editingMode === 'content' && i < editableContent.length - 1 && (
                                 <div 
                                     className={`${styles.paragraphDivider} ${hoverDividers[i+1] ? styles.dividerHover : ''}`}
@@ -386,7 +376,6 @@ export default function ContractEditor() {
                         </React.Fragment>
                     ))}
 
-                    {/* Son paragraf sonrası ayraç */}
                     {editingMode === 'content' && editableContent.length > 0 && (
                         <div 
                             className={`${styles.paragraphDivider} ${hoverDividers[editableContent.length] ? styles.dividerHover : ''}`}
@@ -398,7 +387,7 @@ export default function ContractEditor() {
                                     onClick={() => addNewParagraph(editableContent.length - 1)} 
                                     className={styles.dividerAddButton}
                                 >
-                                    
+                                    +
                                 </button>
                             )}
                         </div>
@@ -418,7 +407,6 @@ export default function ContractEditor() {
                             </div>
                         </div>
                     )}
-                    
                 </div>
 
                 <button
