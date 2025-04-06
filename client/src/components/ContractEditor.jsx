@@ -268,10 +268,10 @@ export default function ContractEditor() {
                     {editableContent.map((paragraph, i) => (
                         <React.Fragment key={i}>
                             <div
-                                className={`${styles.paragraphContainer} ${activeParagraphIndex === i ? styles.activeParagraph : ''}`}
-                                onClick={() => editingMode === 'content' && setActiveParagraphIndex(i)}
-                            >
-                                {editingMode === 'content' && currentEditIndex === i ? (
+  className={`${styles.paragraphContainer} ${activeParagraphIndex === i ? styles.activeParagraph : ''} ${styles[`editingMode-${editingMode}`]}`}
+  onClick={() => editingMode === 'content' && setActiveParagraphIndex(i)}
+>
+  {editingMode === 'content' && currentEditIndex === i ? (
                                     <div className={styles.paragraphEdit}>
                                         <textarea
                                             value={tempValue}
@@ -285,15 +285,14 @@ export default function ContractEditor() {
                                     </div>
                                 ) : (
                                     <p
-  className={`${styles.editableParagraph} ${editingMode === 'content' ? styles.contentEditMode : ''}`}
-  onDoubleClick={() => editingMode === 'content' && startEditParagraph(i)}
-  onClick={(e) => {
-    // Check if click was on the pencil icon
-    if (e.target === e.currentTarget || e.target === e.currentTarget.querySelector(':after')) {
-      editingMode === 'content' && startEditParagraph(i);
-    }
-  }}
->
+      className={`${styles.editableParagraph} ${editingMode === 'content' ? styles.contentEditMode : ''}`}
+      onDoubleClick={() => editingMode === 'content' && startEditParagraph(i)}
+      onClick={(e) => {
+        if (e.target === e.currentTarget || e.target === e.currentTarget.querySelector(':after')) {
+          editingMode === 'content' && startEditParagraph(i);
+        }
+      }}
+    >
   {paragraph.split(/({{.*?}})/g).map((part, j) => {
     const variableMatch = part.match(/{{(.*?)}}/);
     if (variableMatch) {
@@ -336,10 +335,21 @@ export default function ContractEditor() {
   })}
 </p>
                                 )}
-                                {editingMode === 'content' && activeParagraphIndex === i && currentEditIndex !== i && newParagraphIndex !== i && (
-                                    <button onClick={() => deleteParagraph(i)} className={styles.deleteButton}>-</button>
-                                )}
-                            </div>
+                                {editingMode === 'content' && (
+    <button 
+      onClick={(e) => {
+        e.stopPropagation();
+        const container = e.currentTarget.closest(`.${styles.paragraphContainer}`);
+        container.classList.add(styles.deleting);
+        setTimeout(() => deleteParagraph(i), 300);
+      }} 
+      className={styles.deleteButton}
+      aria-label="Delete paragraph"
+    >
+      -
+    </button>
+  )}
+</div>
 
                             {/* Paragraflar arası ayraç */}
                             {editingMode === 'content' && i < editableContent.length - 1 && (
