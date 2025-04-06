@@ -376,7 +376,7 @@ export default function ContractEditor() {
                                     onClick={() => addNewParagraph(editableContent.length - 1)} 
                                     className={styles.dividerAddButton}
                                 >
-                                    +
+                                    
                                 </button>
                             )}
                         </div>
@@ -396,11 +396,7 @@ export default function ContractEditor() {
                             </div>
                         </div>
                     )}
-                    {editingMode === 'content' && editableContent.length > 0 && activeParagraphIndex === null && newParagraphIndex !== editableContent.length && (
-                        <div className={styles.addParagraphBottom}>
-                            <button onClick={() => addNewParagraph(editableContent.length)} className={styles.addButton}>Yeni Madde Ekle</button>
-                        </div>
-                    )}
+                    
                 </div>
 
                 <button
