@@ -1,8 +1,9 @@
-// client/src/components/ContractEditor.jsx
 /**
  * Revize Özeti:
- * - Yeni paragraf ekleme UI'ının doğru konumda (altında) görünmesi için mantık ve renderlama düzenlendi.
- * - newParagraphIndex'in kullanımı ve ilgili koşullu renderlama güncellendi.
+ * - Paragraf aralarında hover olduğunda görünen ekle butonu eklendi
+ * - Paragraf konteynerlerine hover durumu için state ve event handler'lar eklendi
+ * - Butonların sayfa düzenini bozmaması için CSS sınıfları ve pozisyonlama güncellendi
+ * - Paragraf bloklarının arasındaki boşluk daha tutarlı hale getirildi
  */
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -22,7 +23,8 @@ export default function ContractEditor() {
     const [editableContent, setEditableContent] = useState([]);
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [newParagraphIndex, setNewParagraphIndex] = useState(null);
-    const [activeParagraphIndex, setActiveParagraphIndex] = useState(null); // Aktif olarak seçilen paragrafın indeksi
+    const [activeParagraphIndex, setActiveParagraphIndex] = useState(null);
+    const [hoverDividers, setHoverDividers] = useState([]); // Hover durumundaki ayraçlar için state
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const inputRef = useRef(null);
@@ -40,6 +42,8 @@ export default function ContractEditor() {
                     setTemplate(foundTemplate);
                     setVariables(foundTemplate.variables || {});
                     setEditableContent(foundTemplate.content.split('\n'));
+                    // Divider hover array'ini içerik uzunluğuna göre başlat
+                    setHoverDividers(new Array(foundTemplate.content.split('\n').length + 1).fill(false));
                 } else {
                     navigate('/');
                 }
@@ -130,6 +134,8 @@ export default function ContractEditor() {
         updatedContent.splice(index + 1, 0, tempValue);
         setEditableContent(updatedContent);
         setNewParagraphIndex(null);
+        // Divider sayısını güncelle
+        setHoverDividers(prev => [...prev, false]);
     };
 
     const deleteParagraph = (index) => {
@@ -146,6 +152,12 @@ export default function ContractEditor() {
         } else if (activeParagraphIndex > index) {
             setActiveParagraphIndex(activeParagraphIndex - 1);
         }
+        // Divider sayısını güncelle
+        setHoverDividers(prev => {
+            const updated = [...prev];
+            updated.pop();
+            return updated;
+        });
     };
 
     const handleLongPressStart = (key, value) => {
@@ -191,6 +203,21 @@ export default function ContractEditor() {
         }
     };
 
+    // Divider'ın hover durumunu yönetmek için fonksiyonlar
+    const handleDividerMouseEnter = (index) => {
+        if (editingMode === 'content') {
+            const newHoverState = [...hoverDividers];
+            newHoverState[index] = true;
+            setHoverDividers(newHoverState);
+        }
+    };
+
+    const handleDividerMouseLeave = (index) => {
+        const newHoverState = [...hoverDividers];
+        newHoverState[index] = false;
+        setHoverDividers(newHoverState);
+    };
+
     if (loading) return <div className={styles.loading}>Yükleniyor...</div>;
     if (error) return <div className={styles.error}>{error}</div>;
     if (!template) return <div className={styles.error}>Şablon bulunamadı</div>;
@@ -219,6 +246,24 @@ export default function ContractEditor() {
                 </div>
 
                 <div className={styles.preview}>
+                    {/* İlk paragraf öncesi ayraç */}
+                    {editingMode === 'content' && editableContent.length > 0 && (
+                        <div 
+                            className={`${styles.paragraphDivider} ${hoverDividers[0] ? styles.dividerHover : ''}`}
+                            onMouseEnter={() => handleDividerMouseEnter(0)}
+                            onMouseLeave={() => handleDividerMouseLeave(0)}
+                        >
+                            {hoverDividers[0] && (
+                                <button 
+                                    onClick={() => addNewParagraph(-1)} 
+                                    className={styles.dividerAddButton}
+                                >
+                                    +
+                                </button>
+                            )}
+                        </div>
+                    )}
+
                     {editableContent.map((paragraph, i) => (
                         <React.Fragment key={i}>
                             <div
@@ -283,6 +328,25 @@ export default function ContractEditor() {
                                     <button onClick={() => deleteParagraph(i)} className={styles.deleteButton}>-</button>
                                 )}
                             </div>
+
+                            {/* Paragraflar arası ayraç */}
+                            {editingMode === 'content' && i < editableContent.length - 1 && (
+                                <div 
+                                    className={`${styles.paragraphDivider} ${hoverDividers[i+1] ? styles.dividerHover : ''}`}
+                                    onMouseEnter={() => handleDividerMouseEnter(i+1)}
+                                    onMouseLeave={() => handleDividerMouseLeave(i+1)}
+                                >
+                                    {hoverDividers[i+1] && (
+                                        <button 
+                                            onClick={() => addNewParagraph(i)} 
+                                            className={styles.dividerAddButton}
+                                        >
+                                            +
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
                             {editingMode === 'content' && newParagraphIndex === i && (
                                 <div className={styles.paragraphEdit}>
                                     <textarea
@@ -297,13 +361,27 @@ export default function ContractEditor() {
                                     </div>
                                 </div>
                             )}
-                            {editingMode === 'content' && activeParagraphIndex === i && currentEditIndex !== i && newParagraphIndex !== i && (
-                                <div className={styles.addParagraphBelow}>
-                                    <button onClick={() => addNewParagraph(i)} className={styles.addButton}>+</button>
-                                </div>
-                            )}
                         </React.Fragment>
                     ))}
+
+                    {/* Son paragraf sonrası ayraç */}
+                    {editingMode === 'content' && editableContent.length > 0 && (
+                        <div 
+                            className={`${styles.paragraphDivider} ${hoverDividers[editableContent.length] ? styles.dividerHover : ''}`}
+                            onMouseEnter={() => handleDividerMouseEnter(editableContent.length)}
+                            onMouseLeave={() => handleDividerMouseLeave(editableContent.length)}
+                        >
+                            {hoverDividers[editableContent.length] && (
+                                <button 
+                                    onClick={() => addNewParagraph(editableContent.length - 1)} 
+                                    className={styles.dividerAddButton}
+                                >
+                                    +
+                                </button>
+                            )}
+                        </div>
+                    )}
+
                     {editingMode === 'content' && newParagraphIndex === editableContent.length && (
                         <div className={styles.paragraphEdit}>
                             <textarea

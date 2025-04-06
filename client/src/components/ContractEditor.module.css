@@ -3,7 +3,7 @@
 
 .paragraphContainer {
   position: relative;
-  margin-bottom: 5px; /* Bloklar arası boşluk azaltıldı */
+  margin: 0; /* Bloklar arası boşluk ayraçlar tarafından sağlanacak */
   padding: 10px;
   border: 1px solid #ced4da; /* Blok kenarlığı */
   border-radius: 4px;
@@ -97,6 +97,48 @@
 .deleteButton:hover {
   opacity: 1;
   background-color: #f8d7da;
+}
+
+/* Paragraflar arası ayraç stili */
+.paragraphDivider {
+  position: relative;
+  height: 8px; /* Sabit yükseklik, hover olmadığında da boşluk olsun */
+  margin: 4px 0; /* Üst ve alt kenardan biraz boşluk */
+  transition: all 0.2s ease;
+  z-index: 1; /* Üstte olsun */
+}
+
+.dividerHover {
+  height: 20px; /* Hover olunca daha fazla alan */
+}
+
+.dividerAddButton {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1px solid #28a745;
+  color: #28a745;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.dividerAddButton:hover {
+  background-color: #28a745;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 /* DİĞER STİLLER */
@@ -245,13 +287,18 @@
       padding: 2px 4px;
   }
 
-  .addButton {
-      font-size: 14px;
+  .dividerAddButton {
       width: 20px;
       height: 20px;
+      font-size: 14px;
   }
 
-  .addParagraphBelow button {
-      margin: 2px auto; /* Mobil için daha az marjin */
+  .paragraphDivider {
+      height: 6px;
+      margin: 2px 0;
+  }
+
+  .dividerHover {
+      height: 16px;
   }
 }
