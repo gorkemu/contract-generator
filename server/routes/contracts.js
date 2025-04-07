@@ -67,6 +67,30 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.patch('/:id', async (req, res) => {
+  try {
+    const updatedContract = await Contract.findByIdAndUpdate(
+      req.params.id,
+      { 
+        $set: {
+          title: req.body.title,
+          content: req.body.content,
+          variables: req.body.variables,
+          updatedAt: Date.now()
+        }
+      },
+      { new: true }
+    );
+    
+    if (!updatedContract) {
+      return res.status(404).json({ message: 'Sözleşme bulunamadı' });
+    }
+    res.json(updatedContract);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 
 
 export default router;
