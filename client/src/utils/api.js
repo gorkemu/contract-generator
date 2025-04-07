@@ -32,3 +32,13 @@ export const deleteContract = async (id) => {
   if (!response.ok) throw new Error('Sözleşme silinemedi');
   return await response.json();
 };
+
+export const updateContract = async (id, contract) => {
+  const response = await fetch(`${API_BASE}/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(contract)
+  });
+  if (!response.ok) throw new Error('Sözleşme güncellenemedi');
+  return await response.json();
+};
