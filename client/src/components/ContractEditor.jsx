@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './ContractEditor.module.css';
 import { generateContractPDF } from '../utils/pdfGenerator';
-import { getContracts } from '../utils/api';
+import { getContracts, updateContract } from '../utils/api';
 
 export default function ContractEditor() {
     const { id } = useParams();
@@ -22,6 +22,10 @@ export default function ContractEditor() {
     const [error, setError] = useState(null);
     const [draggedItem, setDraggedItem] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
+    const [gridEnabled, setGridEnabled] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+const [saveSuccess, setSaveSuccess] = useState(false);
+
     const inputRef = useRef(null);
     const editModeRef = useRef(false);
     const editorRef = useRef(null);
@@ -258,12 +262,36 @@ export default function ContractEditor() {
         setHoverDividers(newHoverState);
     };
 
+    const handleSaveContract = async () => {
+        try {
+          setIsSaving(true);
+          const contractData = {
+            title: template.title,
+            content: editableContent.join('\n'),
+            variables
+          };
+          
+          await updateContract(id, contractData);
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+        } catch (error) {
+          console.error('Kaydetme hatası:', error);
+          setError('Kaydetme başarısız oldu');
+        } finally {
+          setIsSaving(false);
+        }
+      };
+
     if (loading) return <div className={styles.loading}>Yükleniyor...</div>;
     if (error) return <div className={styles.error}>{error}</div>;
     if (!template) return <div className={styles.error}>Şablon bulunamadı</div>;
 
     return (
-        <div className={styles.container} onClick={handleOutsideClick} ref={editorRef}>
+        <div 
+  className={`${styles.container} ${gridEnabled ? styles.gridEnabled : ''}`} 
+  onClick={handleOutsideClick} 
+  ref={editorRef}
+>
             <div className={styles.contentPanel}>
                 <h1>{template.title}</h1>
                 <p className={styles.category}>{template.category}</p>
@@ -283,6 +311,14 @@ export default function ContractEditor() {
                             İçerik
                         </button>
                     </div>
+                    <button 
+    className={`${styles.gridToggle} ${gridEnabled ? styles.active : ''}`}
+    onClick={() => setGridEnabled(!gridEnabled)}
+    aria-label="Grid hizalamayı aç/kapa"
+  >
+    <span className={styles.gridIcon} />
+    Grid
+  </button>
                 </div>
 
                 <div className={styles.preview}>
@@ -479,13 +515,31 @@ export default function ContractEditor() {
                     )}
                 </div>
 
-                <button
-                    onClick={handleExportPDF}
-                    className={styles.exportButton}
-                    data-has-errors={Object.keys(validationErrors).length > 0}
-                >
-                    {Object.keys(validationErrors).length > 0 ? '⚠️ PDF Oluştur' : 'PDF Oluştur'}
-                </button>
+                <div className={styles.actionButtons}>
+  <button
+    onClick={handleSaveContract}
+    disabled={isSaving}
+    className={`${styles.actionButton} ${saveSuccess ? styles.success : ''}`}
+  >
+    {isSaving ? (
+      <>
+        <span className={styles.loadingSpinner} />
+        Kaydediliyor...
+      </>
+    ) : saveSuccess ? (
+      '✔ Kaydedildi'
+    ) : (
+      'Kaydet'
+    )}
+  </button>
+  <button
+    onClick={handleExportPDF}
+    className={styles.actionButton}
+    data-has-errors={Object.keys(validationErrors).length > 0}
+  >
+    {Object.keys(validationErrors).length > 0 ? '⚠️ PDF Oluştur' : 'PDF Oluştur'}
+  </button>
+</div>
             </div>
         </div>
     );
