@@ -510,3 +510,37 @@ h1 {
     display: none;
   }
 }
+
+.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.dragOver {
+  border: 2px dashed var(--primary-color);
+  background-color: rgba(var(--primary-color-rgb), 0.05);
+  position: relative;
+}
+
+.dragOver:after {
+  content: "Bırak";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--primary-color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.paragraphContainer[draggable="true"] {
+  cursor: grab;
+}
+
+.paragraphContainer[draggable="true"]:active {
+  cursor: grabbing;
+}
