@@ -20,6 +20,8 @@ export default function ContractEditor() {
     const [hoverDividers, setHoverDividers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [draggedItem, setDraggedItem] = useState(null);
+    const [dragOverIndex, setDragOverIndex] = useState(null);
     const inputRef = useRef(null);
     const editModeRef = useRef(false);
     const editorRef = useRef(null);
@@ -49,6 +51,43 @@ export default function ContractEditor() {
 
         fetchTemplate();
     }, [id, navigate]);
+
+
+    // Sürükleme başladığında
+    const handleDragStart = (e, index) => {
+        setDraggedItem(index);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', index);
+    };
+
+    // Sürüklenen öğe üzerine geldiğinde
+    const handleDragOver = (e, index) => {
+        e.preventDefault();
+        setDragOverIndex(index);
+    };
+
+    // Bırakıldığında
+    const handleDrop = (e, dropIndex) => {
+        e.preventDefault();
+        if (draggedItem === null || draggedItem === dropIndex) {
+            setDragOverIndex(null);
+            return;
+        }
+
+        const newContent = [...editableContent];
+        const [movedItem] = newContent.splice(draggedItem, 1);
+        newContent.splice(dropIndex, 0, movedItem);
+        
+        setEditableContent(newContent);
+        setDraggedItem(null);
+        setDragOverIndex(null);
+    };
+
+    // Sürükleme bittiğinde
+    const handleDragEnd = () => {
+        setDraggedItem(null);
+        setDragOverIndex(null);
+    };
 
     const handleVariableChange = (key, value) => {
         setVariables(prev => ({ ...prev, [key]: value }));
@@ -161,7 +200,7 @@ export default function ContractEditor() {
             return updated;
         });
     };
-    
+
     const handleLongPressStart = (key, value) => {
         if ('vibrate' in navigator) navigator.vibrate(50);
         setTimeout(() => startEditVariable(key, value), 1000);
@@ -267,6 +306,23 @@ export default function ContractEditor() {
                     {editableContent.map((paragraph, i) => (
                         <React.Fragment key={i}>
                             <div
+                        className={`${styles.paragraphContainer} ${
+                            activeParagraphIndex === i ? styles.activeParagraph : ''
+                        } ${
+                            editingMode === 'content' ? `${styles['editingMode-content']} ${styles['delete-indicator']}` : ''
+                        } ${
+                            draggedItem === i ? styles.dragging : ''
+                        } ${
+                            dragOverIndex === i ? styles.dragOver : ''
+                        }`}
+                        onClick={() => editingMode === 'content' && setActiveParagraphIndex(i)}
+                        draggable={editingMode === 'content'}
+                        onDragStart={(e) => editingMode === 'content' && handleDragStart(e, i)}
+                        onDragOver={(e) => editingMode === 'content' && handleDragOver(e, i)}
+                        onDrop={(e) => editingMode === 'content' && handleDrop(e, i)}
+                        onDragEnd={handleDragEnd}
+                    >
+                            <div
                                 className={`${styles.paragraphContainer} ${
                                     activeParagraphIndex === i ? styles.activeParagraph : ''
                                 } ${
@@ -336,6 +392,7 @@ export default function ContractEditor() {
                                             return part;
                                         })}
                                     </p>
+                                    
                                 )}
                                 
                                 {editingMode === 'content' && (
@@ -352,6 +409,7 @@ export default function ContractEditor() {
                                         -
                                     </button>
                                 )}
+                            </div>
                             </div>
 
                             {editingMode === 'content' && i < editableContent.length - 1 && (
