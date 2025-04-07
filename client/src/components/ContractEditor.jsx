@@ -133,23 +133,35 @@ export default function ContractEditor() {
         const updatedContent = [...editableContent];
         updatedContent.splice(index, 1);
         setEditableContent(updatedContent);
-        if (currentEditIndex === index) {
+        
+        // Tüm aktif state'leri sıfırla
+        if (currentEditIndex === index || newParagraphIndex === index) {
             setCurrentEditIndex(null);
-        } else if (currentEditIndex > index) {
+            setNewParagraphIndex(null);
+            setTempValue('');
+        }
+        
+        // Diğer index'leri güncelle
+        if (currentEditIndex > index) {
             setCurrentEditIndex(currentEditIndex - 1);
+        }
+        if (newParagraphIndex > index) {
+            setNewParagraphIndex(newParagraphIndex - 1);
         }
         if (activeParagraphIndex === index) {
             setActiveParagraphIndex(null);
         } else if (activeParagraphIndex > index) {
             setActiveParagraphIndex(activeParagraphIndex - 1);
         }
+        
+        // Hover divider state'ini güncelle
         setHoverDividers(prev => {
             const updated = [...prev];
             updated.pop();
             return updated;
         });
     };
-
+    
     const handleLongPressStart = (key, value) => {
         if ('vibrate' in navigator) navigator.vibrate(50);
         setTimeout(() => startEditVariable(key, value), 1000);
