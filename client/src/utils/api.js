@@ -1,10 +1,3 @@
-// client/src/utils/api.js
-/**
- * Revize Özeti:
- * - API_BASE URL'i güncellendi
- * - Hata mesajları iyileştirildi
- */
-
 const API_BASE = 'http://localhost:5000/api/contracts';
 
 export const getContracts = async () => {
@@ -19,9 +12,25 @@ export const saveContract = async (contract) => {
   const response = await fetch(API_BASE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(contract)
+    body: JSON.stringify({
+      ...contract,
+      elements: contract.elements || []
+    })
   });
   if (!response.ok) throw new Error('Sözleşme kaydedilemedi');
+  return await response.json();
+};
+
+export const updateContract = async (id, contract) => {
+  const response = await fetch(`${API_BASE}/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ...contract,
+      elements: contract.elements || []
+    })
+  });
+  if (!response.ok) throw new Error('Sözleşme güncellenemedi');
   return await response.json();
 };
 
@@ -30,15 +39,5 @@ export const deleteContract = async (id) => {
     method: 'DELETE' 
   });
   if (!response.ok) throw new Error('Sözleşme silinemedi');
-  return await response.json();
-};
-
-export const updateContract = async (id, contract) => {
-  const response = await fetch(`${API_BASE}/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(contract)
-  });
-  if (!response.ok) throw new Error('Sözleşme güncellenemedi');
   return await response.json();
 };

@@ -9,28 +9,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const router = express.Router();
 
-// Geçici: Şablonu restore etme endpointi
-router.patch('/restore-template', async (req, res) => {
-  try {
-    const templatePath = path.join(__dirname, '../../client/src/data/templates.json');
-    const templates = JSON.parse(await readFile(templatePath, 'utf-8'));
-    const templateData = templates[0];
-    
-    const updated = await Contract.findOneAndUpdate(
-      {},
-      { $set: { 
-        content: templateData.content, 
-        variables: templateData.variables 
-      }},
-      { new: true }
-    );
-    
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
 router.get('/', async (req, res) => {
   try {
     const contracts = await Contract.find();
@@ -43,8 +21,9 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const contract = new Contract({
     title: req.body.title,
-    content: req.body.content,
-    variables: req.body.variables
+    description: req.body.description,
+    category: req.body.category || 'diğer',
+    elements: req.body.elements || []
   });
 
   try {
@@ -69,16 +48,19 @@ router.delete('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   try {
+    const updateData = {
+      updatedAt: Date.now()
+    };
+    
+    // İsteğe bağlı alanları kontrol et ve ekle
+    if (req.body.title) updateData.title = req.body.title;
+    if (req.body.description) updateData.description = req.body.description;
+    if (req.body.category) updateData.category = req.body.category;
+    if (req.body.elements) updateData.elements = req.body.elements;
+    
     const updatedContract = await Contract.findByIdAndUpdate(
       req.params.id,
-      { 
-        $set: {
-          title: req.body.title,
-          content: req.body.content,
-          variables: req.body.variables,
-          updatedAt: Date.now()
-        }
-      },
+      { $set: updateData },
       { new: true }
     );
     
@@ -90,7 +72,5 @@ router.patch('/:id', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-
-
 
 export default router;

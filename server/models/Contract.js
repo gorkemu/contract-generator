@@ -1,5 +1,21 @@
-// server\models\Contract.js
 import mongoose from 'mongoose';
+
+const elementSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    required: true,
+    enum: ['title', 'paragraph']
+  },
+  content: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  order: {
+    type: Number,
+    required: true
+  }
+});
 
 const contractSchema = new mongoose.Schema({
   title: {
@@ -14,17 +30,10 @@ const contractSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Kategori zorunludur'],
-    enum: ['Gayrimenkul', 'kira', 'hizmet', 'satış', 'diğer'], // Gayrimenkul eklendi
+    enum: ['Gayrimenkul', 'kira', 'hizmet', 'satış', 'diğer'],
     default: 'diğer'
   },
-  content: {
-    type: String,
-    required: [true, 'Şablon içeriği zorunludur']
-  },
-  variables: {  // Array yerine Object olarak değiştirildi
-    type: Object,
-    default: {}
-  },
+  elements: [elementSchema], // Yeni element yapısı
   isActive: {
     type: Boolean,
     default: true
@@ -41,6 +50,7 @@ const contractSchema = new mongoose.Schema({
   collation: { locale: 'tr', strength: 2 }
 });
 
+// Güncelleme zamanı takibi
 contractSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
